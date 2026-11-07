@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Feature Listing: Multi-Tenant Inventory Management Platform</title>
+<style>
+:root{--bg:#fafbfc;--ink:#1b2733;--mute:#5b6b7a;--line:#d9e0e6;--acc:#0f5c6e;--soft:#e8f1f3;--sug:#fff1cc;--sugt:#7a5300}
+:root:not([data-theme="light"]){}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#11181f;--ink:#e4eaef;--mute:#9aa9b6;--line:#2a3742;--acc:#6cc4d6;--soft:#1a2731;--sug:#3d3110;--sugt:#f3c96b}}
+:root[data-theme="dark"]{--bg:#11181f;--ink:#e4eaef;--mute:#9aa9b6;--line:#2a3742;--acc:#6cc4d6;--soft:#1a2731;--sug:#3d3110;--sugt:#f3c96b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{display:grid;grid-template-columns:250px minmax(0,1fr);max-width:1180px;margin:0 auto}
+nav{position:sticky;top:0;align-self:start;height:100vh;overflow:auto;padding:28px 18px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:2px}
+nav b{font-size:15px;margin-bottom:10px;color:var(--acc)}
+nav a{color:var(--mute);text-decoration:none;font-size:14px;padding:5px 8px;border-radius:4px;line-height:1.35}
+nav a:hover,nav a:focus-visible{background:var(--soft);color:var(--ink);outline:none}
+main{padding:40px 36px 80px;max-width:840px}
+h1{font-size:2rem;line-height:1.2;margin:0 0 12px}
+h2{font-size:1.5rem;margin:52px 0 12px;padding-top:20px;border-top:2px solid var(--acc);scroll-margin-top:12px}
+h3{font-size:1.15rem;margin:30px 0 6px;color:var(--acc)}
+p{max-width:72ch}
+ul,ol{padding-left:22px}li{margin:3px 0;max-width:76ch}
+hr{border:0;height:0;margin:0}
+code{background:var(--soft);padding:1px 5px;border-radius:3px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;padding:9px 12px;border:1px solid var(--line);vertical-align:top}
+th{background:var(--soft)}
+.cmp{background:var(--soft);color:var(--acc);border:1px solid var(--acc);font-size:12px;font-weight:600;padding:0 7px;border-radius:9px;white-space:nowrap}
+.ph{background:transparent;color:var(--mute);border:1px solid var(--line);font-size:12px;font-weight:600;padding:0 7px;border-radius:9px;white-space:nowrap}
+.dn{color:var(--acc);font-weight:700}
+.sug{background:var(--sug);color:var(--sugt);font-size:12px;font-weight:600;padding:1px 7px;border-radius:9px;white-space:nowrap}
+@media (max-width:860px){.wrap{display:block}nav{position:static;height:auto;flex-direction:row;flex-wrap:wrap;border-right:0;border-bottom:1px solid var(--line);padding:14px}main{padding:24px 18px 60px}}
+@media print{nav{display:none}.wrap{display:block}}
+</style></head><body><div class="wrap"><nav><b>Contents</b><a href="#1-product-overview">1. Product Overview</a><a href="#2-users-and-roles">2. Users and Roles</a><a href="#3-super-admin-features">3. Super Admin Features</a><a href="#4-company-admin-panel-core-modules">4. Company Admin Panel: Core Modules</a><a href="#5-ecommerce-website-per-company">5. eCommerce Website (Per Company)</a><a href="#6-reports">6. Reports</a><a href="#7-general-platform-features">7. General Platform Features</a><a href="#8-out-of-scope-for-this-version-proposed">8. Out of Scope for This Version (Proposed)</a><a href="#9-decisions-recorded">9. Decisions Recorded</a><a href="#10-remaining-points-to-confirm">10. Remaining Points to Confirm</a><a href="#11-notes-on-markers">11. Notes on Markers</a><a href="#12-research-notes-and-gaps-added">12. Research Notes and Gaps Added</a><a href="#13-accepted-suggestions-and-release-split">13. Accepted Suggestions and Release Split</a></nav><main><h1 id="multi-tenant-inventory-management-platform-feature-listing">Multi-Tenant Inventory Management Platform: Feature Listing</h1>
+<p><strong>Version:</strong> 1.4 (Release 1/2 naming, technology, Flutter app in Release 2) | <strong>Date:</strong> 01 Nov 2026 | <strong>Status:</strong> Ready for freeze</p>
+<p>This document lists every feature planned for the platform. Once it is frozen, the Technical Document will be written. Features I suggested beyond the original brief have been accepted and are now regular requirements (listed with details in Section 13). Items marked <strong><span class="dn" title="Design note">(#)</span></strong> are design notes rather than user-visible features (see Section 11). Items marked <strong><span class="dn" title="Future expansion">(###)</span></strong> are future expansions that are not built now. Every item without a tag is part of Release 1 (first release). Items tagged <span class="ph">Release 2</span> are in scope but planned after the first release. The release tags on accepted suggestions and Compliance items are confirmed. Items marked <span class="cmp">Compliance</span> come from Indian regulations found in research (see Section 12) and must be confirmed with your CA or legal advisor. Everything else comes directly from the brief or your answers.</p>
+<hr />
+<h2 id="1-product-overview">1. Product Overview</h2>
+<p><strong>Two products in one platform:</strong></p>
+<ol>
+<li><strong>Admin Panel:</strong> one shared web panel used by the Super Admin, Company Admins and Company Staff to run inventory, purchasing, sales, expenses, marketing and exhibitions.</li>
+<li><strong>eCommerce Website (one per company):</strong> a separate customer-facing store for each company, powered by APIs exposed by the platform. Each store shows that company's products only.</li>
+</ol>
+<p><strong>Tenancy model:</strong> 1 Super Admin, many Companies, exactly 1 Admin per Company, many Staff per Company. All company data is fully isolated.</p>
+<p><strong>Scale assumption:</strong> about 10 companies at launch, with 50 to 60 products per company.</p>
+<p><strong>Customer mobile app (Release 2):</strong> a Flutter app for each company's eCommerce store, using the same storefront APIs (see 5.14).</p>
+<p><strong>Technology:</strong> .NET for the backend and APIs, React for the Admin Panel and the storefront website, PostgreSQL as the database; Flutter for the Release 2 mobile app.</p>
+<hr />
+<h2 id="2-users-and-roles">2. Users and Roles</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Scope</th>
+<th>Summary of access</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Super Admin</td>
+<td>Whole platform</td>
+<td>Full access to everything: manages companies, subscriptions, plans, platform settings, and can view and manage any company's business data. Configures roles and access for Company Admins.</td>
+</tr>
+<tr>
+<td>Company Admin</td>
+<td>Own company</td>
+<td>Full access to own company data, staff, settings, reports, eCommerce configuration. Configures roles and access for own Staff.</td>
+</tr>
+<tr>
+<td>Company Staff</td>
+<td>Own company</td>
+<td>Access limited by permissions the Company Admin grants. Every staff member can also view their own salary slips and update their own bank details.</td>
+</tr>
+<tr>
+<td>Chartered Accountant (CA)</td>
+<td>Assigned company</td>
+<td>Read-only access to that company's invoices, bills, expense and GST ledger reports (Release 2).</td>
+</tr>
+<tr>
+<td>Customer</td>
+<td>Own company's website</td>
+<td>Registers and orders from that company's eCommerce site only.</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Features</strong>
+- Configurable role-based access control (RBAC) at two levels: the <strong>Super Admin</strong> defines roles and module access for Company Admins; the <strong>Company Admin</strong> defines roles and module access for own Company Staff (view / create / edit / delete / export per module). A Company Admin cannot grant more than they hold themselves.
+- Login with email or mobile plus password; forgot/reset password; change password.
+- Session management, auto-logout on inactivity, single-device logout <span class="ph">Release 1</span>.
+- Activity/audit log of who did what and when.
+- User profile with photo and contact details.</p>
+<hr />
+<h2 id="3-super-admin-features">3. Super Admin Features</h2>
+<h3 id="31-company-tenant-management">3.1 Company (Tenant) Management</h3>
+<ul>
+<li>Create, edit, suspend, reactivate and delete companies.</li>
+<li>Company profile: name, logo, GST/tax number, address, contact, currency, timezone, financial-year start.</li>
+<li>Each company has exactly one GSTIN and one PAN; more cannot be added. A GSTIN or PAN can belong to only one company on the platform. A business with another GSTIN or PAN is set up as a new company with its own Admin, subscription and data. A wrong number can be corrected only by the Super Admin, with an audit trail.</li>
+<li>Create the single Company Admin for each company; reset Admin credentials.</li>
+<li>Company status: Trial, Active, Expired, Suspended.</li>
+<li>Enforce one Admin per company.</li>
+<li>Company-wise usage overview: users, products, orders, storage.</li>
+<li>Full access to any company's data and screens (view and manage), including "login as" a company, with an audit trail of every Super Admin action.</li>
+</ul>
+<h3 id="32-subscription-management">3.2 Subscription Management</h3>
+<ul>
+<li>Two plan types, each with its own plans: <strong>Inventory Panel only</strong>, and <strong>Inventory Panel + eCommerce Website</strong>. The eCommerce website, its APIs, blogs, feedback and storefront settings are available only on the second type.</li>
+<li>Plans with billing cycles <strong>Weekly, Monthly, Yearly</strong> for each plan type.</li>
+<li>Plan definition: price, cycle, trial days, and limits (number of staff, products, orders per month, eCommerce website on/off, modules enabled).</li>
+<li>Assign, upgrade, downgrade, renew, pause and cancel a company's plan.</li>
+<li>Start and end dates, grace period, auto-expiry and auto-suspension.</li>
+<li>Expiry reminders to company Admin (in-app and email).</li>
+<li>GST tax invoices for subscription fees issued by the Super Admin to each company (with company GSTIN), payment history; record manual payments.</li>
+<li>Online subscription payment through <strong>Razorpay</strong>, in addition to manual payment recording.</li>
+<li>Coupons/discounts on plans <span class="ph">Release 2</span>.</li>
+</ul>
+<h3 id="33-platform-administration">3.3 Platform Administration</h3>
+<ul>
+<li>Platform dashboard: total companies, active vs expired, revenue by plan, new signups, expiring soon.</li>
+<li>Global announcements and maintenance notices to all companies.</li>
+<li>Global category master: create categories, with their compliance profile, that every company can use.</li>
+<li>Platform settings: email/SMS/WhatsApp providers, storage, default tax templates.</li>
+<li>Platform-level reports (revenue, churn, plan distribution).</li>
+<li>Super Admin activity log.</li>
+<li>Role and access management: create roles and set module-level permissions for Company Admins.</li>
+<li>API fair-use limits and usage metering per company, so one company cannot slow down the others.</li>
+<li>Platform settings for the third-party bank verification API used for staff bank details.</li>
+<li>Company offboarding: export all company data, then delete after an agreed retention period.</li>
+<li>Support tickets from Company Admins to the Super Admin, with status tracking <span class="ph">Release 2</span>.</li>
+</ul>
+<hr />
+<h2 id="4-company-admin-panel-core-modules">4. Company Admin Panel: Core Modules</h2>
+<h3 id="41-dashboard">4.1 Dashboard</h3>
+<ul>
+<li>Today's sales, purchases, expenses and profit snapshot.</li>
+<li>Low-stock and expiring-batch alerts.</li>
+<li>Turnover alert: when the financial-year turnover crosses ₹4.5 crore, a popup asks the Admin to prepare 6-digit HSN codes (see 4.21).</li>
+<li>Pending online orders, recent sales, top-selling products.</li>
+<li>Sales trend chart (daily/weekly/monthly).</li>
+<li>Upcoming exhibitions and pending payments (receivable/payable).</li>
+<li>On the 1st of each month: a popup asks the Company Admin to send the previous month's GST and tax invoices to the CA (see 4.17).</li>
+</ul>
+<h3 id="42-master-data">4.2 Master Data</h3>
+<ul>
+<li>Product categories, sub-categories, brands. Categories are added by the Super Admin (shared with all companies) and by each Company Admin (own company only). Each category carries a compliance profile (for example Food: FSSAI fields; Packaged goods: Legal Metrology fields; Other: no extra fields), so the right fields appear when a product is added.</li>
+<li>Units of measure with conversions (kg/g, litre/ml, pcs/box).</li>
+<li>Tax/GST rates and HSN codes, kept in a country-aware tax master <span class="dn" title="Design note">(#)</span>. Company-level default tax with per-product override (see 4.17).</li>
+<li>Suppliers/vendors with contact and payment terms.</li>
+<li>Warehouses/storage locations <span class="ph">Release 2</span>.</li>
+<li>Bulk import/export of masters via Excel/CSV.</li>
+</ul>
+<h3 id="43-finished-goods-stock-with-price">4.3 Finished Goods Stock (with price)</h3>
+<ul>
+<li>Finished product master: name, SKU, barcode, category, unit, images, description, and compliance fields (see 4.21).</li>
+<li>Price fields: cost price, MRP, selling price, wholesale price <span class="ph">Release 1</span>, CGST/SGST/IGST (pre-filled from the company default, editable per product; see 4.17).</li>
+<li>Current stock per product (and per location if enabled).</li>
+<li>Opening stock entry.</li>
+<li>Negative stock is never allowed: any sale, production or issue that exceeds available stock is blocked with a clear message.</li>
+<li>Stock adjustments (add/reduce) with reason.</li>
+<li>Stock movement ledger (in/out with source: purchase, sale, production, return, adjustment).</li>
+<li>Minimum stock level and reorder alerts.</li>
+<li>Stock valuation (at cost and at selling price).</li>
+<li>Barcode/QR generation and printing.</li>
+<li>Product variants (size, flavour, pack) <span class="ph">Release 2</span>.</li>
+<li>Mark product visible/hidden on eCommerce website; products with zero stock automatically show as "Currently out of stock".</li>
+</ul>
+<h3 id="44-raw-material-stock-with-price">4.4 Raw Material Stock (with price)</h3>
+<ul>
+<li>Raw material master: name, code, unit, category, supplier, price.</li>
+<li>Current stock, opening stock, adjustments, movement ledger.</li>
+<li>Price history per raw material (latest and average purchase price).</li>
+<li><strong>Inventory lots:</strong> each opening-stock or purchase entry is a lot with its own lot number, quantity, price per unit, supplier and expiry date. Stock, cost and expiry are tracked lot by lot (see 4.18).</li>
+<li>Minimum stock and reorder alerts.</li>
+<li>Stock valuation.</li>
+<li>Wastage/spoilage recording.</li>
+</ul>
+<h3 id="45-batch-inventory-with-price">4.5 Batch Inventory (with price)</h3>
+<ul>
+<li>Batch/lot creation for finished goods and raw materials.</li>
+<li>Batch fields: batch number, manufacturing date, expiry date, quantity, cost per unit, selling price.</li>
+<li>Batch-wise stock on hand and batch-wise price.</li>
+<li>Terminology: a raw material entry is an <strong>inventory lot</strong>; a <strong>batch</strong> is one production run of finished product (see 4.18). Finished goods bought from suppliers get a batch on purchase receipt.</li>
+<li>Stock is always consumed by <strong>FEFO</strong> (First Expired, First Out): the batch closest to expiry is used first for sales, exhibition issues and production.</li>
+<li>Expiry alerts (30/15/7 days, configurable) and expired-stock report.</li>
+<li>Batch traceability: raw-material batches used → finished batch → customers sold to.</li>
+<li>Batch-wise sale and purchase price visibility on bills.</li>
+</ul>
+<h3 id="46-production-and-product-rmc-raw-material-cost">4.6 Production and Product RMC (Raw Material Cost)</h3>
+<ul>
+<li><strong>Switchable per company:</strong> the Company Admin can turn the Production/RMC module on or off in Master Configuration (for companies that only trade and do not manufacture). When off, BOM, RMC, production entry and production reports are hidden. The complete batch flow is in 4.18.</li>
+<li><strong>Recipe / Bill of Materials (BOM)</strong> per product: raw materials, quantities, packing and label used.</li>
+<li><strong>RMC calculation</strong> per product: sum of raw material cost per unit, using latest, average or batch-actual price (selectable).</li>
+<li>Extended product cost: RMC + packing + label + labour + electricity + other overhead = <strong>total cost per unit</strong>.</li>
+<li>Margin calculation: selling price vs total cost, margin % and markup %.</li>
+<li>Production entry: see 4.18 (raw material is deducted when a batch is created; packing and labels are deducted at the packing stage).</li>
+<li>Yield and wastage tracking (expected vs actual output).</li>
+<li>RMC change history when raw material prices change.</li>
+<li>Alert when a price change makes a product margin fall below a set threshold <span class="ph">Release 2</span>.</li>
+</ul>
+<h3 id="47-packing-material-stock">4.7 Packing Material Stock</h3>
+<ul>
+<li>Packing items master (boxes, pouches, bottles, caps, cartons, etc.) with price.</li>
+<li>Stock in/out, adjustments, ledger, low-stock alerts, valuation.</li>
+<li>Link packing items to product BOM for automatic deduction.</li>
+</ul>
+<h3 id="48-label-stock">4.8 Label Stock</h3>
+<ul>
+<li>Label master (per product/size/language) with price and design reference.</li>
+<li>Stock in/out, adjustments, ledger, low-stock alerts, valuation.</li>
+<li>Link labels to product BOM for automatic deduction.</li>
+<li>Label printing pulls batch number, manufacturing date, expiry date and MRP from the batch (see 4.18).</li>
+<li>Track label-wise wastage/misprints.</li>
+</ul>
+<h3 id="49-purchase-management">4.9 Purchase Management</h3>
+<ul>
+<li>Purchase order (PO) creation and approval <span class="ph">Release 1</span>.</li>
+<li><strong>Purchase bill</strong> entry: supplier, date, items (raw material, packing, label, finished goods), quantity, rate, tax, discount, freight, other charges.</li>
+<li>Auto-update stock and batch on saving the bill.</li>
+<li>Input GST (CGST/SGST/IGST) captured per line with supplier GSTIN; feeds the input tax credit in the monthly GST ledger (see 4.17).</li>
+<li>Attach supplier bill image/PDF.</li>
+<li>Purchase return / debit note.</li>
+<li>Supplier payments: full, partial, advance; payment mode; outstanding balance.</li>
+<li>Supplier ledger and payable ageing.</li>
+<li>Print/download bill (PDF).</li>
+</ul>
+<h3 id="410-sales-management">4.10 Sales Management</h3>
+<ul>
+<li><strong>Sales bill/invoice</strong> creation: customer, date, items with batch selection, quantity, rate, discount, tax, other charges.</li>
+<li>Auto-deduct stock (batch-wise, FEFO) on saving; a bill cannot be saved if it would make stock negative.</li>
+<li><strong>GST tax invoice <span class="dn" title="Design note">(#)</span>:</strong> seller and buyer GSTIN, HSN code, place of supply, CGST + SGST for same-state and IGST for inter-state sales, tax-wise totals, amount in words.</li>
+<li><strong>Invoice type:</strong> every sales invoice is tagged B2B or B2C and the tag stays on the invoice; Export is a future expansion <span class="dn" title="Future expansion">(###)</span> (see 4.17).</li>
+<li>Invoice numbering series (configurable prefix, financial-year reset).</li>
+<li>Bill types: cash, credit, wholesale, retail, exhibition sale, online order.</li>
+<li>Payment received: full, partial, advance; payment mode (cash, UPI, card, bank, cheque).</li>
+<li>Sales return / credit note.</li>
+<li>Quotations/estimates and convert to invoice <span class="ph">Release 2</span>.</li>
+<li>Print (A4 and thermal), download PDF, share by WhatsApp/email/SMS.</li>
+<li>Customer ledger and receivable ageing.</li>
+<li>Online orders appear here and convert to sales bills.</li>
+<li><strong>Bulk import of orders/sales bills from Excel:</strong> download a template, upload the file, preview with row-level validation (unknown product, insufficient stock, invalid GST), fix errors, then confirm the import. The reading method (for example a Python script) is decided in the Technical Document.</li>
+<li>Company-branded invoice template (logo, terms, bank details, QR).</li>
+</ul>
+<h3 id="411-customer-management-customer-contact-details">4.11 Customer Management (Customer Contact Details)</h3>
+<ul>
+<li>Customer master: name, mobile, email, alternate contact, addresses (billing/shipping), GST number, birthday/anniversary, notes, tags/groups.</li>
+<li>Customer types: retail, wholesale, exhibition lead, online.</li>
+<li>Source tracking: walk-in, online, exhibition, referral.</li>
+<li>Purchase history, lifetime value, outstanding balance.</li>
+<li>Customer segments (e.g. top buyers, inactive 90 days, by city, by product bought).</li>
+<li>Import/export customer lists; duplicate detection by mobile/email.</li>
+<li>Customers registered on the eCommerce website appear here automatically.</li>
+<li>Opt-in / opt-out flag for marketing messages.</li>
+</ul>
+<h3 id="412-expense-management">4.12 Expense Management</h3>
+<ul>
+<li><strong>Labour cost:</strong> temporary staff (paid per day or per hour) are managed in 4.19; their daily and monthly cost feeds production cost (RMC) and expense reports.</li>
+<li><strong>Electricity expense:</strong> monthly bill entry (units, amount, dates), meter readings, allocation to production/overhead per unit.</li>
+<li><strong>Marketing expense:</strong> ads, printing, sampling, influencer, exhibition promotion; campaign-wise entry with date, amount, notes and bill attachment.</li>
+<li><strong>Rent:</strong> monthly rent entry (recurring) with due date and payment status.</li>
+<li><strong>Miscellaneous expenses:</strong> every entry needs a description of what it was for, so it can be identified later, plus category, amount, date and bill upload.</li>
+<li><strong>Other expenses:</strong> transport, repairs, packaging labour and similar; custom categories.</li>
+<li><strong>Salaries</strong> come from Payroll (see 4.19) and are posted as an expense automatically.</li>
+<li>Each expense is marked as production overhead (added to batch cost, see 4.18) or general overhead.</li>
+<li>Recurring expenses (monthly rent, electricity) with reminders.</li>
+<li>Expense payment mode and receipts upload.</li>
+<li>Expense reports by category, period and product allocation.</li>
+</ul>
+<h3 id="413-marketing-and-messaging">4.13 Marketing and Messaging</h3>
+<ul>
+<li><strong>New product launch message:</strong> compose a message with image/link and send to selected customers.</li>
+<li><strong>Occasional product offer message:</strong> festival/seasonal/discount offers to selected segments.</li>
+<li>Channels: WhatsApp, SMS and email. The Company Admin switches each channel on or off in Master Configuration, and a channel becomes active only after the Admin adds that provider's keys (see 4.16).</li>
+<li>Message templates with placeholders (name, product, offer, validity).</li>
+<li>Audience selection: all, group, segment, tag, city, purchase history.</li>
+<li>Schedule sending; send test message; message history and delivery status.</li>
+<li>Respect customer opt-out; daily send limits.</li>
+<li>Offer/coupon management: discount %, flat amount, validity, minimum order, product/category-specific; codes usable on eCommerce site and in the sales bill.</li>
+<li>Birthday/anniversary greetings <span class="ph">Release 2</span>.</li>
+</ul>
+<h3 id="414-exhibition-management">4.14 Exhibition Management</h3>
+<ul>
+<li>Create exhibition: name, venue, city, dates, stall number, notes.</li>
+<li>Exhibition costs: stall fee, travel, stay, staff, decoration, transport, other; total exhibition expense.</li>
+<li>Assign staff to an exhibition.</li>
+<li><strong>Exhibition stock:</strong> issue stock to exhibition (batch-wise), track units sold, returned and remaining; stock reconciliation on close.</li>
+<li><strong>Exhibition sales:</strong> quick billing screen for stall (fast, touch-friendly, works with barcode), payment modes, customer capture (name, mobile) for leads.</li>
+<li>Day-wise exhibition sales and expenses.</li>
+<li>Exhibition summary: total sales, cost, profit, ROI, best-selling products, new customers gained.</li>
+<li><strong>Bulk import of exhibition sales from Excel</strong> (same template, preview and validation flow as 4.10), so stall sales can be entered through the website after the event. Offline billing is not required.</li>
+<li>Compare exhibitions against each other.</li>
+</ul>
+<h3 id="415-day-wise-sales-data">4.15 Day-Wise Sales Data</h3>
+<ul>
+<li>Daily sales register: bills, items, quantity, amount, tax, discount, payment mode split.</li>
+<li>Filter by date range, product, category, customer, staff, channel (counter, online, exhibition).</li>
+<li>Day closing summary: sales, expenses, cash in hand, and difference <span class="ph">Release 2</span>.</li>
+<li>Compare day, week and month.</li>
+<li>Export to Excel/PDF.</li>
+</ul>
+<h3 id="416-company-settings-and-master-configuration-company-admin">4.16 Company Settings and Master Configuration (Company Admin)</h3>
+<ul>
+<li>Company profile, logo, tax details, bank details, invoice templates and numbering.</li>
+<li>Staff management: create, edit, deactivate; permissions.</li>
+<li>Stock rules: FEFO is fixed, negative stock is not allowed; RMC price basis (latest / average / batch actual).</li>
+<li>Alert thresholds and notification preferences.</li>
+<li><strong>Master Configuration table</strong> (Company Admin only; each item has an on/off toggle and key fields):<ul>
+<li>Messaging channels: WhatsApp, SMS, email. Toggle each and enter provider keys to activate.</li>
+<li>Payments: Razorpay keys for the eCommerce site; Cash on Delivery on/off.</li>
+<li>Custom domain for the company's website.</li>
+<li>Production/RMC module on/off.</li>
+<li>Default company tax rates (CGST, SGST, IGST) and CA contact details with the monthly CA sending on/off (see 4.17).</li>
+<li>Include staff salary in the CA pack: tick or untick (see 4.17).</li>
+<li>Payroll module on/off (see 4.19).</li>
+<li>eCommerce website settings (see Section 5.7).</li>
+</ul>
+</li>
+<li>Keys are stored encrypted and shown masked; a feature stays inactive until valid keys are saved.</li>
+<li>Subscription view: current plan, usage vs limits, renewal date, invoices.</li>
+<li>Data backup export and data import.</li>
+</ul>
+<h3 id="417-gsttax-setup-and-monthly-ca-filing-pack">4.17 GST/Tax Setup and Monthly CA Filing Pack</h3>
+<p><strong>Tax setup (company default, product override)</strong>
+- <strong>Company-level default tax:</strong> the Company Admin sets the default CGST, SGST and IGST rates once (for example 6% CGST + 6% SGST, with IGST 12%).
+- <strong>Product-level tax:</strong> when a product is added, CGST, SGST and IGST are pre-filled with the company default. The user can change them for that product (for example 2.5% + 2.5% or 9% + 9%). HSN code is set per product.
+- Tax type per product: taxable, nil-rated, exempt or zero-rated.
+- Changing the company default updates only products still on the default; products with their own rates are left as they are. Option to apply a new default to selected products.
+- Bills store the tax rate used at the time of billing, so later rate changes never alter old invoices.
+- Prices entered as tax-inclusive or tax-exclusive, set per company <span class="ph">Release 1</span>.
+- Bulk update of product tax rates through Excel import.
+- Audit log of every tax rate change (who, when, old and new value).
+- Sales and purchase bills use per-product tax: CGST + SGST for same-state, IGST for inter-state.</p>
+<p><strong>CA contact details</strong>
+- Company Admin adds CA name, firm name, mobile and one or more email addresses (with optional CC).
+- Toggle to switch the monthly CA popup and sending on or off.
+- CA read-only login to view the month's invoices and reports <span class="ph">Release 2</span>.</p>
+<p><strong>Invoice types: B2B, B2C, Export</strong>
+- Every sales invoice carries a type that is saved on the invoice: <strong>B2B</strong> (buyer has a GSTIN) or <strong>B2C</strong> (no GSTIN). <strong>Export</strong> (buyer outside India) is a future expansion <span class="dn" title="Future expansion">(###)</span>; the type list is built so it can be switched on later.
+- The type is suggested from the buyer's GSTIN and can be changed before saving. Online orders are B2C unless the customer enters a GSTIN at checkout.
+- <span class="dn" title="Future expansion">(###)</span> When Export is switched on later, export invoices will also hold: country, currency and exchange rate, shipping bill number and date, port code, and whether tax is nil under a Letter of Undertaking (LUT) or IGST is paid.
+- Credit and debit notes inherit the type of the original invoice.
+- Tax is calculated and totalled separately for B2B and B2C (and for Export later <span class="dn" title="Future expansion">(###)</span>), both in reports and in the CA pack.</p>
+<p><strong>Monthly CA review and send</strong>
+1. <strong>Popup:</strong> on the 1st of each month, when the Company Admin opens the dashboard, a popup says "Send last month's GST and tax invoices to your CA". It appears on each dashboard visit until the month is sent, with a "Remind me later" option.
+2. <strong>Send to CA</strong> opens a listing of the previous month's financial records, grouped in tabs:
+    - Sales invoices: B2B, B2C and credit notes (an Export tab is added later <span class="dn" title="Future expansion">(###)</span>).
+    - Purchase bills (raw material, packing, labels, finished goods) with input GST. Raw material cost is included here.
+    - Rent invoices or receipts (if available).
+    - Electricity, marketing, exhibition, transport and misc expenses, with their bills.
+    - Staff salary for the month (payroll register or manual salary expense). This tab appears only when "Include staff salary in the CA pack" is ticked in Master Configuration, and the Admin can untick it for one month at send time.
+3. <strong>Listing screen:</strong> each row has a checkbox (with select all per tab, and all tabs), date, number, party, type, taxable value, CGST, SGST, IGST, total, attachment status and verification status. All rows are ticked by default and the Admin unticks what should not go. Filters and search by type, party, amount and date. Live totals of the ticked rows.
+4. <strong>Verification:</strong> the Admin can open any row to check it, fix it (edits are logged) and mark it verified. Warnings are shown for problems such as a B2B invoice without a buyer GSTIN, a missing bill attachment or a tax mismatch.
+5. <strong>Send (manual):</strong> nothing is emailed automatically. The Admin clicks Send Email, previews the email and pack, and it goes to the CA with a copy to the Admin. Only ticked rows are shared. If any rows are unticked, a confirmation popup lists them and asks "Are you sure?". Normally all rows are sent; unticking is only for rows the Admin still needs to correct, such as a price or a missing calculation.
+6. <strong>Pack contents:</strong>
+    - Invoice and bill PDFs with their attachments.
+    - Excel register per group: invoice number, date, party, GSTIN, type, taxable value, CGST, SGST, IGST, total.
+    - <strong>Ledger-based GST calculation:</strong> output GST on sales, shown separately for B2B and B2C (Export later <span class="dn" title="Future expansion">(###)</span>), minus input tax credit on purchases and adjustments for returns, giving net GST payable or refundable split into CGST, SGST and IGST.
+    - Rate-wise and HSN-wise tax summary, expense summary, salary summary (only when salary sharing is on) and a list of cancelled invoices. Individual salary slips are included only if the Admin ticks them, and bank details are left out.
+7. <strong>After sending:</strong> sent rows are marked "Sent to CA" with date and pack number. Unticked rows stay "Pending" and can go in a later supplementary pack. A record edited after sending is flagged as changed. The Admin can send again or download the pack for any past month.
+8. The email goes through the company's email channel in Master Configuration. Failed delivery is retried and alerts the Admin; large packs go as a secure download link that expires after some days.
+9. Month lock after sending, so earlier bills change only through credit or debit notes <span class="ph">Release 2</span>.</p>
+<h3 id="418-production-batches-quality-check-and-batch-pricing">4.18 Production Batches, Quality Check and Batch Pricing</h3>
+<p><strong>Terms:</strong> an <strong>inventory lot</strong> is raw material received or entered as opening stock, with its own quantity, price and expiry date (for example 1000 kg). A <strong>batch</strong> is one production run made from one lot, with its own batch number, manufacturing date, expiry date, output, cost and selling price. The raw material lot and the batch each have their own expiry date.</p>
+<p><strong>Flow:</strong> Raw material lot → Batch created → QA In Progress → QA Passed (to Packing), QA Failed (Discard) or Rework (back to QA In Progress) → Batch-wise priced stock → Website and bills.</p>
+<ol>
+<li><strong>Opening raw material:</strong> the company starts with raw material lots (quantity, price, supplier, expiry). One lot can produce many batches.</li>
+<li><strong>Batch creation:</strong> choose product, lot and raw material quantity used; the quantity is deducted from the lot. <strong>A batch draws from one lot only.</strong> The next lot is used only after the earlier lot is fully used (oldest expiry first), so every batch has one clear expiry and price basis. If the lot has less left than planned, the last batch is simply smaller. Lots are never mixed in one batch, because mixing older and newer material would change the expiry date.</li>
+<li><strong>Output and loss:</strong> enter the actual output. The system shows loss quantity and loss % (100 kg in, 95 kg out = 5% loss), with an alert if loss exceeds a threshold set per product. Batch expiry is entered by the user (default from product shelf life), with a warning if it is later than the lot's expiry.</li>
+<li><strong>Quality Assurance (QA):</strong> a batch is always in one of four states: <strong>QA In Progress</strong>, <strong>QA Passed</strong>, <strong>QA Failed</strong> or <strong>Rework</strong>. Rework sends the batch back to QA In Progress, and the final result is then QA Passed or QA Failed. Every batch gets a QA report: date, checked by, parameters (custom per product, such as taste, colour, moisture, weight, appearance) with result and remarks, overall Pass/Fail, and attachments (lab report, photos). A batch cannot be packed or sold until QA passes.<ul>
+<li><strong>Fail:</strong> the batch is discarded with a reason. Its raw material cost is booked as a loss in profit reports.</li>
+<li><strong>Pass:</strong> the batch goes to packing.</li>
+<li><strong>Rework:</strong> the batch is reworked (reason, actions taken, extra material and labour cost added to the batch cost, extra loss recorded) and returns to QA In Progress. The number of reworks is recorded.</li>
+</ul>
+</li>
+<li><strong>Packing:</strong> the passed batch is packed into sellable units (pack size and count). Packing and label stock is deducted here, and packing loss is recorded. Packed units become sellable stock under that batch. Every pack label carries the batch number, manufacturing date and expiry date printed from the system, and each pack is traceable to its batch.</li>
+<li><strong>Batch costing:</strong> batch cost = raw material at lot price + packing + labels + labour + share of production overhead (electricity, rent, salaries, misc). Cost per unit and margin are shown for every batch. <strong>Daily figures are approximate:</strong> overhead is estimated from the month's recurring amounts spread per day. <strong>Month-end costing:</strong> after the month closes, the Admin runs "Finalise month costing", which spreads the actual rent, electricity, salaries and misc across that month's batches and updates batch cost and profit. Reports show Approximate until the month is finalised and Final afterwards.</li>
+<li><strong>Batch-wise pricing:</strong> each batch has its own selling price and MRP (defaulting from the product, editable at packing). Sales bills and exhibition issues use batches oldest-expiry first.</li>
+<li><strong>Website roll-out:</strong> the website shows the price of the batch currently on sale. When that batch sells out, the next batch goes live with its new price and new expiry date. An order takes only what remains of the current batch. Admin can pause a batch from the website <span class="ph">Release 1</span>.</li>
+<li><strong>Batch status:</strong> Created, QA In Progress, Rework, QA Passed, QA Failed (then Discarded), Packing, Ready for sale, Sold out.</li>
+</ol>
+<p><em>Example:</em> Lot of 1000 kg. Batch 1 uses 100 kg and yields 95 kg (5% loss); QC fails, so it is discarded. Batch 2 uses 50 kg and yields 47 kg (6% loss); QC passes, so it goes to packing. The lot has 850 kg left for later batches.</p>
+<h3 id="419-staff-salary-and-payroll">4.19 Staff, Salary and Payroll</h3>
+<ul>
+<li><strong>Payroll on/off:</strong> if salary is handled by the CA or outside the platform, the Company Admin switches Payroll off in Master Configuration and enters the monthly salary total as an expense instead. Salary still shows in profit reports.</li>
+<li><strong>Two staff types:</strong> <strong>Permanent</strong> staff are paid monthly (fixed salary); <strong>Temporary</strong> staff are paid per day or per hour. Both can be in the same company.</li>
+<li>Staff profile: name, designation, staff type, joining date, pay basis (monthly, per day, per hour), pay rate, allowances, deductions and statutory details (PAN, PF/UAN, ESI number, state for professional tax). A staff member may or may not have a login.</li>
+<li>Daily attendance (present, half-day, absent, leave, overtime) with monthly summary; hours in and out for hourly staff.</li>
+<li>Monthly payroll run by the Company Admin: salary from attendance, plus allowances, bonus and overtime, minus advances and deductions; approve, then mark paid with date and payment mode.</li>
+<li><strong>Statutory deductions <span class="dn" title="Design note">(#)</span>:</strong> PF, ESI, Professional Tax and TDS on salary are calculated automatically and shown on the slip, with employer contributions tracked separately. Each staff member has on/off flags for PF and ESI. Rates, wage limits and slabs (Professional Tax is state-wise) live in a configurable statutory master so they can be updated when the law changes. TDS uses the tax regime and declarations the staff member provides. Monthly PF, ESI, PT and TDS statements are available for the CA. Filing and paying them on government portals is planned for Release 3.</li>
+<li><strong>Salary slip</strong> per staff per month (PDF) with earnings, deductions, net pay and attendance. Staff see and download only their own slips; the Admin sees all.</li>
+<li><strong>Bank details:</strong> staff add and update their own (account holder, account number, IFSC, bank, branch, UPI). Details are checked through a third-party bank verification API (IFSC and account details) and can be saved only after the check passes, so no Admin approval is needed. Numbers are masked and every change is logged.</li>
+<li>Salaries post automatically as an expense and feed batch cost and profit reports.</li>
+<li>Advance and loan tracking with a deduction schedule <span class="ph">Release 2</span>.</li>
+<li>Payroll reports: salary register and month-wise payout.</li>
+</ul>
+<h3 id="420-inventory-control-enhancements">4.20 Inventory Control Enhancements</h3>
+<p>Found in leading inventory software (Zoho Inventory, Odoo, Fishbowl) and not yet covered above.
+- <strong>Physical stock count:</strong> full and cycle counts by category, location or batch; enter or scan counted quantity; variance report; stock is adjusted only after Admin approval.
+- <strong>Write-off types:</strong> expired, damaged, sample, gift, own use, QC-rejected; each with a reason and booked to the right expense.
+- <strong>Approval rules:</strong> adjustments and write-offs above a set value need Company Admin approval; bulk adjustments through Excel.
+- <strong>Purchase order and goods receipt (GRN):</strong> receive goods against a PO, partial receipts, ordered vs received vs billed comparison, supplier returns. Low-stock alerts convert to draft POs in one click.
+- <strong>Incoming raw material QC:</strong> each raw material lot is accepted or rejected on receipt, with remarks, before it becomes usable stock <span class="ph">Release 2</span>.
+- <strong>Batch recall:</strong> mark a batch as recalled; it is blocked from sale and from the website, the customers and bills that received it are listed, and they can be notified by message.
+- <strong>Barcode scanning</strong> (phone camera or USB scanner) in billing, exhibition billing, stock count and goods receipt.
+- <strong>Combo/bundle products</strong> (gift packs made of several products; stock deducted from the parts) <span class="ph">Release 2</span>.
+- <strong>Customer-group price lists</strong> (retail, wholesale, distributor) applied automatically on billing <span class="ph">Release 2</span>.
+- <strong>Multiple locations</strong> (factory, shop, stall) with stock transfers, in-transit status and bin/rack labels <span class="ph">Release 2</span>.
+- <strong>Cash book, bank book and day book</strong> with cheque tracking <span class="ph">Release 2</span>.</p>
+<h3 id="421-product-compliance-and-gst-rules-india-compliance-phase-1">4.21 Product Compliance and GST Rules (India) <span class="cmp">Compliance</span> <span class="ph">Release 1</span></h3>
+<p><strong>Legal Metrology (packaged goods)</strong>
+- Fields per product and pack: manufacturer/packer/importer name and address, generic name, net quantity, MRP inclusive of all taxes, consumer care details, country of origin (imported goods), dimensions where relevant, date of manufacture or packing, best before or expiry date (taken from the batch).
+- MRP is stored per batch (see 4.18) and always tax-inclusive; a selling price above MRP is blocked.
+- Pack labels can be printed with these fields.</p>
+<p><strong>FSSAI (applies to categories with the Food compliance profile)</strong>
+- Company FSSAI licence number; per product: veg/non-veg symbol, ingredients, nutrition information per 100 g/ml, allergen information, storage and usage instructions, batch/lot number on the label.
+- Shown on the product page and label template.</p>
+<p><strong>GST rules</strong>
+- <strong>HSN is required on every product:</strong> it is a mandatory field when a product is added and in Excel imports, and it is printed on all GST invoices, including B2B and export bills. Minimum 4 digits. From ₹5 crore turnover, 6 digits are required: at ₹4.5 crore the Admin gets a popup to prepare the 6-digit codes, and at ₹5 crore a product without a 6-digit HSN cannot be billed. Because every product already has HSN, activating Export (a future expansion <span class="dn" title="Future expansion">(###)</span>) needs no separate HSN step.
+- <strong>Turnover tracker (follows the GST "aggregate turnover" definition):</strong> the financial year's sales across all channels, including taxable, exempt and export sales, without GST and cess. The Admin can add turnover brought forward from earlier years. Each company has one GSTIN and one PAN, so no other registrations are combined. At ₹4.5 crore the Admin gets a popup to prepare 6-digit HSN codes. On crossing ₹5 crore, a second popup explains that B2B and export e-invoicing (IRN) generally starts from the next financial year and stays applicable even if turnover later falls; B2C invoices are outside e-invoicing.
+- <strong>e-Invoicing applicable</strong> setting with an "applicable from" date, as in Tally. Once set, the e-invoice fields are used on B2B invoices; the IRN module itself is Release 2 (see below).
+- GSTIN format check for company, customers and suppliers; state code and place of supply derived automatically.
+- Bill of Supply for composition-scheme or exempt sales; reverse-charge flag on purchase bills. <span class="ph">Release 2</span>
+- Invoice numbers are consecutive, unique per financial year, and no longer than 16 characters.
+- <strong>Delivery challan</strong> for stock sent to exhibitions or on approval without a sale; the invoice follows when a sale happens.
+- <strong>e-Invoice (IRN and QR code)</strong> is mandatory for B2B invoices once a company's turnover reaches ₹5 crore. Not in the first release, but invoice fields (IRN, acknowledgement number, QR, transporter and vehicle details for e-way bill) are reserved so it can be added as an optional module <span class="ph">Release 2</span>.
+- CA pack tables follow GSTR-1 sections: B2B, B2C, credit/debit notes, HSN summary, documents issued (an export table comes with Export <span class="dn" title="Future expansion">(###)</span>).</p>
+<hr />
+<h2 id="5-ecommerce-website-per-company">5. eCommerce Website (Per Company)</h2>
+<p>All companies use one common storefront design (no custom design per company). The website and its APIs are enabled only for companies on the Inventory Panel + eCommerce Website plan. Each company gets its own website name and custom domain, which the Company Admin manages from Master Configuration in the common Admin Panel. The storefront talks to the platform through APIs scoped to one company (via its domain and API key), so a website can only ever access its own company's products, customers and orders.</p>
+<h3 id="51-customer-registration-and-login">5.1 Customer Registration and Login</h3>
+<ul>
+<li>Register with name, mobile, email, password.</li>
+<li>Mobile/email OTP verification.</li>
+<li>Login with email/mobile + password or OTP.</li>
+<li>Social login <span class="ph">Release 2</span>.</li>
+<li>Forgot/reset password, change password.</li>
+<li>Profile management.</li>
+<li>Customer account is created in that company's customer master.</li>
+<li>Guest checkout <span class="ph">Release 1</span>.</li>
+</ul>
+<h3 id="52-product-listing">5.2 Product Listing</h3>
+<ul>
+<li>Grid/list view with images, price, MRP, discount badge, stock status.</li>
+<li>Category and sub-category navigation.</li>
+<li>Search with suggestions and filters (category, price range, brand, availability).</li>
+<li>Sorting (price, newest, popularity).</li>
+<li>Pagination or infinite scroll.</li>
+<li>Only products marked "visible" are shown. Products with zero stock stay listed but show "Currently out of stock" and cannot be added to the cart.</li>
+<li>The price shown is that of the batch currently on sale; when it sells out, the next batch goes live at its own price (see 4.18).</li>
+</ul>
+<h3 id="53-product-detail-page">5.3 Product Detail Page</h3>
+<ul>
+<li>Image gallery with zoom, description, price, MRP, tax info, unit/pack size.</li>
+<li>Real-time stock availability; quantity selector limited to available stock; "Currently out of stock" message when none is left.</li>
+<li>Variants, ingredients/specs, usage instructions, and the mandatory declarations listed in 4.21 and 5.10.</li>
+<li>Add to cart and buy now.</li>
+<li>Add to wishlist <span class="ph">Release 2</span>.</li>
+<li>Related products; customer ratings and reviews (see 5.13).</li>
+<li>Share product link; SEO-friendly URL and meta tags.</li>
+</ul>
+<h3 id="54-cart-and-checkout">5.4 Cart and Checkout</h3>
+<ul>
+<li>Cart with quantity update, remove, price summary, tax and shipping calculation.</li>
+<li>Apply coupon/offer code.</li>
+<li>Address selection at checkout; delivery method (home delivery / pickup); optional GSTIN entry so the order becomes a B2B invoice.</li>
+<li>Payment: online through <strong>Razorpay</strong> (cards, UPI, netbanking, wallets) and Cash on Delivery; the Company Admin can switch each on or off in Master Configuration.</li>
+<li>Order review and confirmation page; confirmation email/SMS/WhatsApp.</li>
+<li>Stock re-check at the moment of order placement.</li>
+</ul>
+<h3 id="55-order-management-customer-side">5.5 Order Management (Customer Side)</h3>
+<ul>
+<li>My Orders list with status and filter.</li>
+<li>Order detail: items, amounts, address, payment, status timeline.</li>
+<li>Track order; download invoice.</li>
+<li>Cancel order (before dispatch), request return/refund <span class="ph">Release 1</span>.</li>
+<li>Reorder previous order.</li>
+</ul>
+<h3 id="56-address-management">5.6 Address Management</h3>
+<ul>
+<li>Add, edit, delete addresses; set default; label (home, office).</li>
+<li>Separate billing and shipping addresses.</li>
+<li>Pincode serviceability check.</li>
+</ul>
+<h3 id="57-store-content-and-settings-managed-by-company-admin">5.7 Store Content and Settings (Managed by Company Admin)</h3>
+<ul>
+<li>Store branding within the common design: website name, logo, colours, banner images, home page sections (featured, new arrivals, best sellers).</li>
+<li>Static pages: About and Contact. Terms, Privacy, Shipping/Return policy and FAQs are managed as described in 5.12.</li>
+<li>Shipping rules: flat rate, free above amount, by pincode/zone.</li>
+<li>Payment method settings (Razorpay keys, COD on/off), see 4.16.</li>
+<li>Custom domain mapping, entered by the Company Admin in Master Configuration.</li>
+<li>SEO settings, social links, contact form, WhatsApp chat button.</li>
+<li>Website on/off switch; maintenance mode.</li>
+</ul>
+<h3 id="58-backend-order-api-key-requirement">5.8 Backend Order API (Key Requirement)</h3>
+<p>The API accepts an order from the company's website and creates it in the platform <strong>after validating products and stock</strong>.</p>
+<ul>
+<li>Company-scoped authentication (per-company API key) plus customer token.</li>
+<li>Product and category list, product detail and live stock availability APIs.</li>
+<li>Customer register, login and profile APIs.</li>
+<li>Address CRUD APIs.</li>
+<li>Cart validation API (price, tax, stock, coupon).</li>
+<li><strong>Create order API:</strong> validates that each product exists, is active and has enough stock (negative stock is not allowed); re-calculates prices server-side (client prices are never trusted); reserves/deducts stock; rejects with a clear error listing which items failed.</li>
+<li>Order list, detail, status and cancel APIs.</li>
+<li>Payment callback/webhook handling.</li>
+<li>Blog, policy, FAQ and feedback APIs (see 5.12 and 5.13).</li>
+<li>Idempotency to prevent duplicate orders on retry.</li>
+<li>Rate limiting, request logging and API versioning.</li>
+<li>Auto-created online order shows in the Admin Panel with status "New" and notifies the Admin/Staff.</li>
+</ul>
+<h3 id="59-online-order-handling-admin-side">5.9 Online Order Handling (Admin Side)</h3>
+<ul>
+<li>Order inbox with statuses: New, Confirmed, Packed, Shipped, Delivered, Cancelled, Returned.</li>
+<li>Confirm/reject, edit before dispatch, assign to staff.</li>
+<li>Convert order to a sales bill with batch selection; stock deducted accordingly.</li>
+<li>Update status with tracking number and courier name; customer notified on every change.</li>
+<li>Payment status: Pending, Paid, Failed, Refunded; COD collection tracking.</li>
+<li>Refund and return handling; stock added back on return.</li>
+<li>Abandoned cart list <span class="ph">Release 2</span>.</li>
+</ul>
+<h3 id="510-storefront-compliance-and-trust-compliance-phase-1">5.10 Storefront Compliance and Trust <span class="cmp">Compliance</span> <span class="ph">Release 1</span></h3>
+<p>Based on the Consumer Protection (E-Commerce) Rules, 2020 and Legal Metrology rules.
+- <strong>Business details</strong> on the footer and policy page: legal name, address, GSTIN, FSSAI licence number (food), customer care number and email, grievance officer name and contact.
+- <strong>Total price with break-up</strong> (product, tax, shipping, COD charge); no hidden charges at checkout.
+- <strong>Product page declarations:</strong> net quantity, MRP, expiry or best-before date, country of origin, manufacturer details, ingredients and nutrition (food).
+- Return, refund, exchange, warranty, delivery and payment information visible to the customer.
+- <strong>Explicit consent:</strong> no pre-ticked boxes for terms or marketing.
+- <strong>Complaints:</strong> customer raises a complaint from the account or contact page and gets a ticket number and status tracking. Acknowledged within 48 hours and resolved within one month, with SLA timers and overdue alerts for the Company Admin.
+- Cancellation charges follow the rules; the default is none.</p>
+<h3 id="511-additional-storefront-features-market-comparison">5.11 Additional Storefront Features (Market Comparison)</h3>
+<ul>
+<li><strong>Stock reservation</strong> at checkout with a timeout (for example 15 minutes), so unpaid online orders release stock.</li>
+<li><strong>Returns:</strong> return window and reasons, approval, refund to original payment or store credit, and stock re-entry or write-off depending on condition.</li>
+<li><strong>Razorpay handling:</strong> full and partial refunds from the Admin Panel, payment status through webhooks with signature check, retry on failed payment, daily settlement reconciliation report.</li>
+<li><strong>Shipping:</strong> courier name and tracking number entered manually now; optional automated courier integration (rates, pincode serviceability, labels, tracking updates) as a Release 2 module <span class="ph">Release 2</span>.</li>
+<li><strong>COD controls:</strong> COD charge, order value limit, pincode-wise availability, and OTP/WhatsApp confirmation before dispatch to reduce returns <span class="ph">Release 1</span>.</li>
+<li>"Notify me when back in stock" for out-of-stock products <span class="ph">Release 2</span>.</li>
+<li>Abandoned cart reminders by email or WhatsApp <span class="ph">Release 2</span>.</li>
+<li>SEO basics: sitemap, structured product data, meta tags, clean URLs, fast loading.</li>
+<li>Google Analytics and Meta Pixel IDs in Master Configuration <span class="ph">Release 1</span>.</li>
+<li>Security: CAPTCHA on registration and login, rate limiting, no card data stored (Razorpay handles payment details).</li>
+<li><strong>Webhooks</strong> for order and stock changes sent to the storefront, plus API documentation and a test key per company.</li>
+</ul>
+<h3 id="512-website-content-blogs-policies-and-faqs-company-admin">5.12 Website Content: Blogs, Policies and FAQs (Company Admin)</h3>
+<p><strong>Blogs</strong>
+- Company Admin creates, edits, schedules, publishes, unpublishes and deletes blog posts in the Admin Panel; they appear on that company's website only.
+- Fields: title, URL slug, cover image, rich-text body with images, category and tags, author, publish date, SEO title and description, optional related products.
+- Status: draft, scheduled, published, archived.
+- Website: blog list with categories, blog detail page, share buttons and related posts.
+- Comments on posts, with moderation <span class="ph">Release 2</span>.</p>
+<p><strong>Policies and documents</strong>
+- Company Admin adds and edits Terms and Conditions, Privacy Policy, Shipping policy and Return/Refund policy, as rich text or an uploaded PDF.
+- Each policy keeps versions with a published date. The version a customer accepted is stored with their consent record (see 7.1). When a new Terms or Privacy version is published, customers must accept it at their next login or checkout.
+- Shown in the website footer and linked at registration and checkout.
+- Super Admin can supply default policy templates for companies to start from <span class="ph">Release 2</span>.</p>
+<p><strong>FAQs and documents</strong>
+- FAQ groups (for example Orders, Payment, Delivery, Returns) with questions and answers, ordering, show/hide per item, and search on the website.
+- Downloadable documents (for example catalogue or product care guide) shown on a Downloads page.</p>
+<h3 id="513-customer-feedback-and-reviews">5.13 Customer Feedback and Reviews</h3>
+<ul>
+<li>Customers can give: product reviews (star rating, text, photos) after delivery, order and delivery feedback, and general feedback or suggestions from a Feedback page. Complaints stay separate tickets (see 5.10).</li>
+<li>Only verified buyers can review a product. Each review is linked to the order and the batch, so quality problems can be traced.</li>
+<li>Feedback inbox for the Company Admin and Staff: filter by type, rating and product; reply; mark resolved; publish or hide reviews (moderation); assign to a staff member.</li>
+<li>Alert to the Admin for low ratings (default 2 stars or below, configurable).</li>
+<li>Optional feedback request message after delivery by email or WhatsApp, switched on by the Company Admin (off by default).</li>
+<li>Reports: average rating by product and batch, feedback volume, low-rated items.</li>
+</ul>
+<h3 id="514-customer-mobile-app-flutter-release-2">5.14 Customer Mobile App (Flutter) <span class="ph">Release 2</span></h3>
+<ul>
+<li>A Flutter app (Android and iOS) for the company's customers, with the same features as the storefront: catalogue, product page with declarations, cart and checkout (Razorpay and COD), account, orders, addresses, feedback and complaints.</li>
+<li>Uses the same company-scoped storefront APIs as the website (5.8); no separate backend.</li>
+<li>Details (one app per company or one shared app, store publishing, push notifications) will be agreed before Release 2 starts; the developer will provide boilerplate code.</li>
+</ul>
+<hr />
+<h2 id="6-reports">6. Reports</h2>
+<p>Every report supports date range, filters, on-screen view, and export to Excel/PDF. Company Admin can control which staff see which reports.</p>
+<h3 id="61-stock-reports">6.1 Stock Reports</h3>
+<ul>
+<li>Current stock summary: finished goods, raw material, packing, labels.</li>
+<li>Stock valuation report (cost and selling value).</li>
+<li>Batch-wise stock and expiry report; near-expiry and expired stock.</li>
+<li>Low-stock / reorder report.</li>
+<li>Stock movement/ledger per item.</li>
+<li>Dead and slow-moving stock; fast-moving stock.</li>
+<li>Stock ageing.</li>
+</ul>
+<h3 id="62-sales-reports">6.2 Sales Reports</h3>
+<ul>
+<li>Day-wise, week-wise, month-wise, year-wise sales.</li>
+<li>Product-wise, category-wise, customer-wise, staff-wise sales.</li>
+<li>Channel-wise: counter, online, exhibition.</li>
+<li>Invoice-type wise: B2B and B2C sales (Export later <span class="dn" title="Future expansion">(###)</span>), each with separate tax totals.</li>
+<li>Financial-year turnover against the ₹4.5 crore alert and the ₹5 crore limit.</li>
+<li>Payment mode report; discount report; tax (GST) summary; monthly GST ledger (output tax, input tax credit, net payable; see 4.17).</li>
+<li>Sales returns report.</li>
+<li>Top and bottom products; top customers.</li>
+<li>Receivables and customer outstanding ageing.</li>
+</ul>
+<h3 id="63-purchase-reports">6.3 Purchase Reports</h3>
+<ul>
+<li>Purchase register; supplier-wise, item-wise purchases.</li>
+<li>Raw material price trend and price comparison across suppliers.</li>
+<li>Payables and supplier outstanding ageing.</li>
+<li>Purchase returns.</li>
+</ul>
+<h3 id="64-cost-and-profit-reports">6.4 Cost and Profit Reports</h3>
+<ul>
+<li><strong>Product RMC report</strong> and total cost per unit breakdown.</li>
+<li>Product-wise margin and profitability.</li>
+<li>Batch-wise profit.</li>
+<li>Profit and Loss (period-wise): sales – purchases/COGS – expenses.</li>
+<li>Expense report by category (labour, electricity, marketing, others).</li>
+<li>Labour cost report (daily/monthly).</li>
+<li>Cash flow summary: money in vs money out <span class="ph">Release 2</span>.</li>
+<li>Break-even indicator per product <span class="ph">Release 2</span>.</li>
+</ul>
+<h3 id="65-production-reports">6.5 Production Reports</h3>
+<ul>
+<li>Production log; raw material consumption; yield vs wastage.</li>
+<li>Packing and label consumption.</li>
+</ul>
+<h3 id="66-customer-and-marketing-reports">6.6 Customer and Marketing Reports</h3>
+<ul>
+<li>New vs repeat customers; customer lifetime value.</li>
+<li>Inactive customers (win-back list).</li>
+<li>Message campaigns: sent, delivered, failed; sales after campaign.</li>
+<li>Marketing spend vs sales generated.</li>
+<li>Offer/coupon usage.</li>
+</ul>
+<h3 id="67-exhibition-reports">6.7 Exhibition Reports</h3>
+<ul>
+<li>Exhibition-wise sales, expenses, profit and ROI.</li>
+<li>Day-wise exhibition sales; product performance per exhibition.</li>
+<li>Stock issued vs sold vs returned; leads captured.</li>
+<li>Exhibition comparison.</li>
+</ul>
+<h3 id="68-online-store-reports">6.8 Online Store Reports</h3>
+<ul>
+<li>Orders by status; conversion and cancellation rates.</li>
+<li>Feedback and ratings: average rating by product and batch, low-rated items (see 5.13).</li>
+<li>Best-selling online products; sales by city/pincode.</li>
+<li>Abandoned carts <span class="ph">Release 2</span>.</li>
+</ul>
+<h3 id="69-owner-insight-reports-best-overview-for-the-admin">6.9 Owner Insight Reports (Best Overview for the Admin)</h3>
+<ul>
+<li><strong>Business health dashboard:</strong> revenue, cost, profit, cash position, stock value at a glance.</li>
+<li><strong>Reorder suggestions:</strong> what to buy and how much, based on sales speed.</li>
+<li><strong>Profit leakage report:</strong> products sold below cost, high wastage, expiring stock value.</li>
+<li><strong>Best exhibition and channel report:</strong> where the most profit comes from.</li>
+<li>Month-over-month and year-over-year comparison.</li>
+<li>Scheduled reports emailed to the Admin (daily/weekly/monthly).</li>
+</ul>
+<h3 id="610-batch-and-period-profit-analytics">6.10 Batch and Period Profit Analytics</h3>
+<p>The Company Admin can see complete profit, with charts, tables and drill-down, for:
+- <strong>Each batch:</strong> revenue minus batch cost (raw material, packing, labels, labour, allocated overhead) = profit and margin %, with units sold vs remaining. Discarded batches show as a loss.
+- <strong>Each inventory lot:</strong> all batches from the lot, raw material cost, output, loss %, QC pass rate, revenue and profit.
+- <strong>Each day, week, month, quarter and year:</strong> sales revenue (excluding tax) minus cost of units sold, minus period expenses not already in batch cost (rent, electricity, salaries, marketing, misc), minus discarded batch losses = net profit. Quarters follow the company's financial-year start.
+- Drill down from year to quarter, month, week, day, then to bills and batches; compare any two periods.
+- Filters by product, batch, lot and channel; export to Excel/PDF.
+- Value of unsold stock is shown separately so profit is not misread.
+- <strong>Overall company profit:</strong> total earnings minus total amount invested in the period (purchases, production costs, expenses, salaries), shown next to the batch-based profit. Amounts exclude GST.</p>
+<hr />
+<h2 id="7-general-platform-features">7. General Platform Features</h2>
+<ul>
+<li><strong>Notifications:</strong> in-app, email, optional SMS/WhatsApp for low stock, expiry, new orders, payment due, subscription expiry.</li>
+<li><strong>Global search</strong> across products, customers, bills.</li>
+<li><strong>Data import/export:</strong> Excel/CSV for products, customers, stock, suppliers, opening balances, orders and sales bills.</li>
+<li><strong>Attachments:</strong> upload bills, images, documents.</li>
+<li><strong>Tax and currency setup per company:</strong> India GST and INR now; database and tax logic are designed so other countries' tax systems can be added later <span class="dn" title="Design note">(#)</span>. Multi-language UI <span class="ph">Release 2</span>.</li>
+<li><strong>Responsive UI</strong> that works on desktop, tablet and mobile.</li>
+<li><strong>Print support:</strong> A4, thermal receipt, barcode labels.</li>
+<li><strong>Audit trail</strong> for stock, bills and price changes.</li>
+<li><strong>Backups and restore</strong>; company data export on request.</li>
+<li><strong>Security:</strong> encrypted passwords, HTTPS, tenant data isolation, role-based permissions, API keys per company, optional two-factor authentication <span class="ph">Release 2</span>.</li>
+<li><strong>Help and onboarding:</strong> setup checklist for new companies, sample data.</li>
+</ul>
+<h3 id="71-privacy-and-data-protection-india-dpdp-act-and-rules-compliance-phase-1-consent-notice-and-records-rights-retention-and-breach-items-are-phase-2-before-may-2027">7.1 Privacy and Data Protection (India DPDP Act and Rules) <span class="cmp">Compliance</span> <span class="ph">Release 1</span> (consent notice and records); rights, retention and breach items are Release 2, before May 2027</h3>
+<ul>
+<li>Standalone privacy notice at registration and checkout: what data is collected, why, and how to withdraw consent or complain.</li>
+<li>Consent records (who, what, when, notice version); marketing opt-in per channel; withdrawing consent is as easy as giving it.</li>
+<li>Customer rights on the account page: view, correct, download and request deletion of their data; Admin handles erasure requests with a log. <span class="ph">Release 2</span></li>
+<li>Retention rules: personal data kept only as long as needed (tax records as the law requires), with notice before erasure. <span class="ph">Release 2</span></li>
+<li>Personal data breach log and alert workflow, ready for the 72-hour report to the authority. <span class="ph">Release 2</span></li>
+<li>Sensitive data (bank details, API keys) encrypted and masked; access logs for who viewed it.</li>
+<li>Staff data (bank details, salary) treated as personal data with restricted access.</li>
+<li>Age declaration at registration; block or parental consent for under 18 <span class="ph">Release 2</span>.</li>
+<li>Core duties apply from about 13 May 2027. Each company is the data owner and the platform processes data for it (agreement covered in the Technical Document).</li>
+</ul>
+<hr />
+<h2 id="8-out-of-scope-for-this-version-proposed">8. Out of Scope for This Version (Proposed)</h2>
+<ul>
+<li>Accounting/general ledger with full double-entry books.</li>
+<li>Filing and paying PF, ESI, professional tax and TDS on government portals: planned for Release 3. In Releases 1 and 2 payroll calculates them and produces statements (see 4.19).</li>
+<li>Native mobile apps in Release 1 (web is responsive). A Flutter customer app for the eCommerce store is planned for Release 2 (see 5.14).</li>
+<li>Automated courier integration and shipping labels (manual courier and tracking entry is in scope; automation is an optional Release 2 module, see 5.11).</li>
+<li>Government e-invoice (IRN) and e-way bill API integration in the first release (fields are reserved, optional Release 2 module; see 4.21).</li>
+<li>Tax systems of other countries: not built now, only kept possible by design <span class="dn" title="Design note">(#)</span>.</li>
+<li>Export sales and export invoices: future expansion <span class="dn" title="Future expansion">(###)</span>.</li>
+<li>Direct filing of GST returns (GSTR-1, GSTR-3B) on the government portal: planned for Release 3. Until then the CA receives the data and files it.</li>
+<li>Multi-branch stock transfer between companies.</li>
+</ul>
+<p>Tell me if any of these should be moved into scope.</p>
+<hr />
+<h2 id="9-decisions-recorded">9. Decisions Recorded</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Topic</th>
+<th>Decision</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Data access</td>
+<td>Super Admin has full access and can manage everything, including each company's business data.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Permissions</td>
+<td>Configurable at two levels: Super Admin configures Company Admin roles and access; Company Admin configures Staff roles and access.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Messaging</td>
+<td>WhatsApp, SMS and email are all supported. Company Admin toggles each and adds keys in Master Configuration.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Payments</td>
+<td>Razorpay. Cash on Delivery is configurable by the Company Admin.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Tax</td>
+<td>GST invoicing and India tax now; database design stays scalable for other countries <span class="dn" title="Design note">(#)</span>.</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Storefront</td>
+<td>One common design, no per-company custom design. We maintain each company's website name; each website accesses only its own company's products.</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Domains</td>
+<td>Each company has its own custom domain, entered by the Company Admin in Master Configuration.</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Stock rule</td>
+<td>FEFO. Negative stock not allowed. Out-of-stock products show "Currently out of stock" on the website.</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Exhibition billing</td>
+<td>No offline mode. Company Admin works through the website, with bulk Excel import for orders and sales.</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Scale</td>
+<td>About 10 companies, 50 to 60 products per company.</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Production</td>
+<td>Switchable per company.</td>
+</tr>
+<tr>
+<td>12</td>
+<td>GST setup</td>
+<td>Company-level default CGST/SGST/IGST, pre-filled on each new product and editable per product.</td>
+</tr>
+<tr>
+<td>13</td>
+<td>CA monthly invoices</td>
+<td>On the 1st of each month the Company Admin sees a dashboard popup, reviews and selects the month's invoices and financial records, and sends them to the CA. Sales are tagged B2B or B2C.</td>
+</tr>
+<tr>
+<td>14</td>
+<td>Production flow</td>
+<td>Raw material lot → batch (one lot per batch) → QC → packing → batch-wise priced stock; see 4.18.</td>
+</tr>
+<tr>
+<td>15</td>
+<td>Payroll</td>
+<td>Salary roll-out, salary slips and staff bank details are in scope; see 4.19.</td>
+</tr>
+<tr>
+<td>16</td>
+<td>Sending to CA</td>
+<td>Always manual. The popup appears on the 1st, the Company Admin clicks Send Email. No email goes out automatically. Unticked items need an "Are you sure?" confirmation.</td>
+</tr>
+<tr>
+<td>17</td>
+<td>Salary in CA pack</td>
+<td>Configurable checkbox per company: salary shared with the CA as an expense, or not. Payroll itself can be switched off.</td>
+</tr>
+<tr>
+<td>18</td>
+<td>Export</td>
+<td>Future expansion, not built now <span class="dn" title="Future expansion">(###)</span>.</td>
+</tr>
+<tr>
+<td>19</td>
+<td>Categories</td>
+<td>Super Admin adds global categories, each Company Admin adds own; compliance fields depend on the category.</td>
+</tr>
+<tr>
+<td>20</td>
+<td>HSN</td>
+<td>Required on every product (minimum 4 digits) and shown on all GST invoices, including B2B and export. 6 digits required from ₹5 crore turnover, with a popup at ₹4.5 crore.</td>
+</tr>
+<tr>
+<td>21</td>
+<td>Salary as expense</td>
+<td>With Payroll off, the Admin enters a monthly salary total as an expense.</td>
+</tr>
+<tr>
+<td>22</td>
+<td>Website content</td>
+<td>Company Admin manages blogs, Terms and Conditions, Privacy Policy, FAQs and documents; customers can give feedback and reviews.</td>
+</tr>
+<tr>
+<td>23</td>
+<td>Suggested features</td>
+<td>All accepted as requirements. Release 1 or Release 2 for each is listed in Section 13 and confirmed.</td>
+</tr>
+<tr>
+<td>24</td>
+<td>Subscription plans</td>
+<td>Two plan types: Inventory Panel only, and Inventory Panel + eCommerce Website, each with weekly, monthly and yearly plans.</td>
+</tr>
+<tr>
+<td>25</td>
+<td>Razorpay</td>
+<td>The Super Admin's own Razorpay collects subscription fees; each Company Admin uses their own Razorpay for the store.</td>
+</tr>
+<tr>
+<td>26</td>
+<td>Lots and batches</td>
+<td>A batch uses one lot only; the last batch may be smaller; lots are never mixed.</td>
+</tr>
+<tr>
+<td>27</td>
+<td>Packing and labels</td>
+<td>Pack labels carry batch number and expiry date, tracked in the system.</td>
+</tr>
+<tr>
+<td>28</td>
+<td>Costing</td>
+<td>Daily figures are approximate; a month-end costing run finalises batch cost and profit.</td>
+</tr>
+<tr>
+<td>29</td>
+<td>Website batches</td>
+<td>When a batch sells out, the next batch goes live with its new price and expiry date.</td>
+</tr>
+<tr>
+<td>30</td>
+<td>QA states</td>
+<td>QA In Progress, QA Passed, QA Failed, Rework (then back to QA In Progress).</td>
+</tr>
+<tr>
+<td>31</td>
+<td>Staff and payroll</td>
+<td>Permanent (monthly) and Temporary (per day or per hour) staff; PF, ESI, Professional Tax and TDS calculated; portal filing not included.</td>
+</tr>
+<tr>
+<td>32</td>
+<td>Bank details</td>
+<td>Verified through a third-party API; no Admin approval needed.</td>
+</tr>
+<tr>
+<td>33</td>
+<td>Profit</td>
+<td>Excludes GST. Overall profit = total earnings minus total amount invested, shown with batch-based profit.</td>
+</tr>
+<tr>
+<td>34</td>
+<td>HSN and Export</td>
+<td>Covered by row 20: HSN is always required, so Export activation needs no separate HSN step.</td>
+</tr>
+<tr>
+<td>35</td>
+<td>Turnover</td>
+<td>GST aggregate turnover, with alerts at ₹4.5 crore and ₹5 crore and an "e-Invoicing applicable" setting.</td>
+</tr>
+<tr>
+<td>36</td>
+<td>Policy versions</td>
+<td>Customers accept a new Terms or Privacy version at their next login or checkout.</td>
+</tr>
+<tr>
+<td>37</td>
+<td>e-Invoice</td>
+<td>First release has the GST tax invoice only; e-invoice fields are reserved.</td>
+</tr>
+<tr>
+<td>38</td>
+<td>Company identity</td>
+<td>One GSTIN and one PAN per company. Another GSTIN or PAN needs a new company.</td>
+</tr>
+<tr>
+<td>39</td>
+<td>Portal filing</td>
+<td>Filing and payment on government portals (GST returns, PF, ESI, Professional Tax, TDS) is outside Releases 1 and 2 and planned for Release 3.</td>
+</tr>
+<tr>
+<td>40</td>
+<td>Technology</td>
+<td>Backend and APIs in .NET, Admin Panel and storefront website in React, PostgreSQL database.</td>
+</tr>
+<tr>
+<td>41</td>
+<td>Mobile app</td>
+<td>A Flutter customer app for the eCommerce store is planned for Release 2 (see 5.14); details are agreed before Release 2 starts.</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="10-remaining-points-to-confirm">10. Remaining Points to Confirm</h2>
+<p>None. All points are answered and recorded in Section 9. The document is ready to freeze on your confirmation.</p>
+<hr />
+<h2 id="11-notes-on-markers">11. Notes on Markers</h2>
+<p><strong><span class="dn" title="Design note">(#)</span> Design note, not a user-facing feature.</strong> India GST is the only tax system delivered now, but the database design and tax logic must stay scalable so other countries' tax systems can be added later without a redesign. This is handled in the Technical Document.</p>
+<p><strong><span class="dn" title="Future expansion">(###)</span> Future expansion, not built now.</strong> Export sales (export invoices, currencies, LUT or IGST handling, shipping bill details) are planned for later. The first release does not show them, but the invoice type, tax calculation and CA pack are designed so Export can be switched on without a redesign.</p>
+<hr />
+<h2 id="12-research-notes-and-gaps-added">12. Research Notes and Gaps Added</h2>
+<p>I compared this document with public feature lists and Indian rules. Compliance items are summaries of public sources, so please confirm them with your CA or legal advisor.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Area checked</th>
+<th>What I found</th>
+<th>Added in</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Inventory software (Zoho Inventory, Odoo, Fishbowl)</td>
+<td>Stock counts, adjustment approvals, purchase orders and receipts, transfers and bin locations, price lists, bundles, barcode scanning, webhooks</td>
+<td>4.20, 5.11</td>
+</tr>
+<tr>
+<td>Food and batch tracking software</td>
+<td>Batch quality records, expiry and recall traceability</td>
+<td>4.18, 4.20</td>
+</tr>
+<tr>
+<td>Indian eCommerce checklists (Shiprocket)</td>
+<td>Guest checkout, several payment options, COD verification, refunds, returns and exchange, courier tracking, analytics, security</td>
+<td>5.11</td>
+</tr>
+<tr>
+<td>Consumer Protection (E-Commerce) Rules, 2020</td>
+<td>Seller details, grievance officer, complaint timelines, price break-up, no pre-ticked consent</td>
+<td>5.10</td>
+</tr>
+<tr>
+<td>Legal Metrology (Packaged Commodities) Rules</td>
+<td>Mandatory pack declarations, MRP inclusive of tax, declarations also shown online</td>
+<td>4.21, 5.10</td>
+</tr>
+<tr>
+<td>FSSAI Labelling and Display Regulations</td>
+<td>Batch number, expiry, veg/non-veg symbol, nutrition, licence number</td>
+<td>4.21</td>
+</tr>
+<tr>
+<td>GST rules</td>
+<td>HSN digits by turnover, e-invoice at ₹5 crore, e-way bill, delivery challan</td>
+<td>4.21, 8</td>
+</tr>
+<tr>
+<td>GST aggregate turnover and Tally</td>
+<td>Turnover is counted PAN-wise on all supplies (taxable, exempt, export) without GST; e-invoicing applies from the year after ₹5 crore is crossed; Tally has an "e-Invoicing applicable" setting with a date</td>
+<td>4.21</td>
+</tr>
+<tr>
+<td>DPDP Act and Rules 2025</td>
+<td>Consent notice, rights, retention, 72-hour breach report, phased from May 2027</td>
+<td>7.1</td>
+</tr>
+<tr>
+<td>Multi-tenant SaaS practice</td>
+<td>Fair-use limits, offboarding, GST invoices for subscriptions, support tickets</td>
+<td>3.2, 3.3</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Sources:</strong> zoho.com/inventory; shiprocket.in/blog/top-10-must-have-features-for-an-ecommerce-website; mondaq.com (Consumer Protection E-Commerce Rules); ssrana.in (Legal Metrology); fssai.gov.in (Labelling and Display compendium); tallysolutions.com (HSN in e-invoices); incorpx.io (e-invoice thresholds); jsalaw.com and ey.com (DPDP Rules 2025); busy.in, taxguru.in and tallysolutions.com (aggregate turnover and e-invoice applicability).</p>
+<hr />
+<h2 id="13-accepted-suggestions-and-release-split">13. Accepted Suggestions and Release Split</h2>
+<p>You accepted all my suggestions, so each one is a requirement now. Release 1 means the first release and Release 2 means after it. You confirmed this release split.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Section</th>
+<th>Release</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Session management</td>
+<td>2</td>
+<td>Release 1</td>
+<td>Auto-logout after inactivity (default 30 minutes, configurable), "log out from all devices", and a list of active sessions.</td>
+</tr>
+<tr>
+<td>Wholesale price</td>
+<td>4.3</td>
+<td>Release 1</td>
+<td>A separate wholesale price on each product, used for wholesale customers.</td>
+</tr>
+<tr>
+<td>Purchase orders with approval</td>
+<td>4.9</td>
+<td>Release 1</td>
+<td>PO with supplier, items and expected date; statuses draft, approved, partly received, closed; Admin approval above a set value.</td>
+</tr>
+<tr>
+<td>Tax-inclusive or tax-exclusive prices</td>
+<td>4.17</td>
+<td>Release 1</td>
+<td>Per-company setting; bills calculate tax accordingly.</td>
+</tr>
+<tr>
+<td>Pause a batch on the website</td>
+<td>4.18</td>
+<td>Release 1</td>
+<td>The batch stays in stock but is not sold online; the next batch goes live if there is one.</td>
+</tr>
+<tr>
+<td>Guest checkout</td>
+<td>5.1</td>
+<td>Release 1</td>
+<td>Order without an account (name, mobile, email, address, mobile OTP), with a prompt to create an account afterwards.</td>
+</tr>
+<tr>
+<td>Return and refund requests</td>
+<td>5.5, 5.11</td>
+<td>Release 1</td>
+<td>Customer requests a return with a reason and photos; the Admin approves; refund follows 5.11.</td>
+</tr>
+<tr>
+<td>COD controls</td>
+<td>5.11</td>
+<td>Release 1</td>
+<td>COD charge, minimum and maximum order value, pincode availability, OTP or WhatsApp confirmation before dispatch.</td>
+</tr>
+<tr>
+<td>Analytics IDs</td>
+<td>5.11</td>
+<td>Release 1</td>
+<td>Fields for Google Analytics and Meta Pixel; loaded on the website only when filled in.</td>
+</tr>
+<tr>
+<td>Coupons on subscription plans</td>
+<td>3.2</td>
+<td>Release 2</td>
+<td>Code, percentage or flat amount, validity, usage limit, applicable plans.</td>
+</tr>
+<tr>
+<td>Support tickets to Super Admin</td>
+<td>3.3</td>
+<td>Release 2</td>
+<td>Subject, category, priority, attachments, status, reply thread and notifications.</td>
+</tr>
+<tr>
+<td>Multiple locations and transfers</td>
+<td>4.2, 4.20</td>
+<td>Release 2</td>
+<td>Stock per location (factory, shop, stall), transfers with in-transit status, bin/rack labels.</td>
+</tr>
+<tr>
+<td>Product variants</td>
+<td>4.3</td>
+<td>Release 2</td>
+<td>Size, flavour or pack attributes; each variant has its own SKU, barcode, price, stock and batches; selector on the website.</td>
+</tr>
+<tr>
+<td>Margin alert</td>
+<td>4.6</td>
+<td>Release 2</td>
+<td>Minimum margin % per product; alert when a raw material price change breaks it.</td>
+</tr>
+<tr>
+<td>Quotations</td>
+<td>4.10</td>
+<td>Release 2</td>
+<td>Quote number, validity date, statuses (draft, sent, accepted, expired), PDF sharing, convert to invoice.</td>
+</tr>
+<tr>
+<td>Birthday and anniversary greetings</td>
+<td>4.13</td>
+<td>Release 2</td>
+<td>Template per occasion, sent on the day to opted-in customers through the chosen channels.</td>
+</tr>
+<tr>
+<td>Day closing</td>
+<td>4.15</td>
+<td>Release 2</td>
+<td>Opening cash, sales by payment mode, expenses, expected vs counted cash and the difference; the day is locked after closing.</td>
+</tr>
+<tr>
+<td>CA read-only login</td>
+<td>2, 4.17</td>
+<td>Release 2</td>
+<td>Login linked to one company to view and download invoices, bills and ledgers only; the Admin can revoke it.</td>
+</tr>
+<tr>
+<td>Month lock</td>
+<td>4.17</td>
+<td>Release 2</td>
+<td>Lock a month after sending to the CA; later changes only through credit or debit notes.</td>
+</tr>
+<tr>
+<td>Advance and loan tracking</td>
+<td>4.19</td>
+<td>Release 2</td>
+<td>Amount, instalments and balance; deducted automatically in payroll.</td>
+</tr>
+<tr>
+<td>Incoming raw material QC</td>
+<td>4.20</td>
+<td>Release 2</td>
+<td>Accept or reject a lot on receipt, with remarks.</td>
+</tr>
+<tr>
+<td>Combo/bundle products</td>
+<td>4.20</td>
+<td>Release 2</td>
+<td>Gift pack of several products with its own price; stock is deducted from the parts.</td>
+</tr>
+<tr>
+<td>Customer-group price lists</td>
+<td>4.20</td>
+<td>Release 2</td>
+<td>Retail, wholesale and distributor prices applied by customer group.</td>
+</tr>
+<tr>
+<td>Cash, bank and day book</td>
+<td>4.20</td>
+<td>Release 2</td>
+<td>Entries created from receipts, payments and expenses; cheque status (issued, deposited, cleared, bounced).</td>
+</tr>
+<tr>
+<td>Social login</td>
+<td>5.1</td>
+<td>Release 2</td>
+<td>Sign in with Google.</td>
+</tr>
+<tr>
+<td>Wishlist</td>
+<td>5.3</td>
+<td>Release 2</td>
+<td>Save products and move them to the cart.</td>
+</tr>
+<tr>
+<td>Abandoned carts</td>
+<td>5.9, 5.11, 6.8</td>
+<td>Release 2</td>
+<td>Cart list, reminder by email or WhatsApp to opted-in customers with a limit on reminders, recovered-order report.</td>
+</tr>
+<tr>
+<td>Back-in-stock notification</td>
+<td>5.11</td>
+<td>Release 2</td>
+<td>Customer subscribes on an out-of-stock product and gets one message when stock returns.</td>
+</tr>
+<tr>
+<td>Automated courier integration</td>
+<td>5.11</td>
+<td>Release 2</td>
+<td>Rates, pincode serviceability, labels and tracking updates through a courier partner.</td>
+</tr>
+<tr>
+<td>Blog comments</td>
+<td>5.12</td>
+<td>Release 2</td>
+<td>Comments are moderated before they appear.</td>
+</tr>
+<tr>
+<td>Default policy templates</td>
+<td>5.12</td>
+<td>Release 2</td>
+<td>Super Admin provides starter Terms, Privacy and Return policy templates.</td>
+</tr>
+<tr>
+<td>Cash flow summary and break-even</td>
+<td>6.4</td>
+<td>Release 2</td>
+<td>Money in vs money out per period; units a product must sell to cover its cost.</td>
+</tr>
+<tr>
+<td>Two-factor authentication</td>
+<td>7</td>
+<td>Release 2</td>
+<td>Authenticator app or email OTP for admins; the Company Admin can require it for staff.</td>
+</tr>
+<tr>
+<td>Multi-language UI</td>
+<td>7</td>
+<td>Release 2</td>
+<td>English first; Hindi and Gujarati proposed.</td>
+</tr>
+<tr>
+<td>Age declaration at registration</td>
+<td>7.1</td>
+<td>Release 2</td>
+<td>Tick for 18 years or older; block or parental consent otherwise.</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Compliance items in Release 2:</strong> Bill of Supply and reverse-charge flag (4.21), the e-Invoice module (4.21; the invoice fields are reserved in Release 1), and customer data rights, retention rules and the breach log under DPDP (7.1), which must be ready before May 2027.</p>
+<p><strong>Release 2 also includes</strong> the Flutter customer app (5.14).</p>
+<p><strong>Release 3 (planned):</strong> filing and payment on government portals for GST returns (GSTR-1, GSTR-3B), PF, ESI, Professional Tax and TDS.</p></main></div></body></html>
