@@ -12,3 +12,6 @@ Full and cycle counts with variance and approval; write-off types booked to expe
 
 ## Depends on
 WB-3.1.2
+
+## Mobile-readiness (for PH-6, §14.4)
+Stock adjustment, count and approval endpoints are idempotent and usable from a phone.

@@ -12,3 +12,6 @@ Order inbox and statuses, confirm, edit, assign, convert to sales bill, tracking
 
 ## Depends on
 MS-4.2 (previous milestone)
+
+## Mobile-readiness (for PH-6, §14.4)
+Compact order list and detail payloads; new-order event raises a push notification.

@@ -31,5 +31,8 @@ The tenant filter and authorisation policy (MS-1.1) protect every later table an
 - The stock engine (WB-1.4.2) is the core of the product: FEFO, one lot per production batch and the no-negative-stock rule must be concurrency-safe before sales and production are built on it.
 - Hosting (cloud provider) is not decided yet; it is needed only for Phase 5 (release readiness).
 
+## Mobile-readiness (for the ERP Mobile App, PH-6, §14.4)
+Every API built in this phase follows the mobile-ready conventions: versioned routes, bounded paginated lists, idempotent creates, device-aware sessions and push-token registration. They are set up in WB-1.1.1 and WB-1.1.2 and checked in every integration batch, so the mobile phase needs no API rework. Attachment upload (WB-1.3 and later) is size-limited.
+
 ## Definition of done (phase)
 Every milestone DONE, the phase demo accepted at gate G-P, calibration recorded, the next phase re-planned in detail with the real points per batch.

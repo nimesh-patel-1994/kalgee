@@ -1,6 +1,6 @@
 # Multi-Tenant Inventory Management Platform: Feature Listing
 
-**Version:** 1.4 (Release 1/2 naming, technology, Flutter app in Release 2) | **Date:** 01 Nov 2026 | **Status:** Ready for freeze
+**Version:** 1.5 (adds the ERP Mobile App, Section 14; v1.4 was Release 1/2 naming, technology, Flutter customer app in Release 2) | **Date:** 11 Nov 2026 | **Status:** Ready for freeze
 
 This document lists every feature planned for the platform. Once it is frozen, the Technical Document will be written. Features I suggested beyond the original brief have been accepted and are now regular requirements (listed with details in Section 13). Items marked **(#)** are design notes rather than user-visible features (see Section 11). Items marked **(###)** are future expansions that are not built now. Every item without a tag is part of Release 1 (first release). Items tagged **[Release 2]** are in scope but planned after the first release. The release tags on accepted suggestions and Compliance items are confirmed. Items marked **[Compliance]** come from Indian regulations found in research (see Section 12) and must be confirmed with your CA or legal advisor. Everything else comes directly from the brief or your answers.
 
@@ -17,9 +17,11 @@ This document lists every feature planned for the platform. Once it is frozen, t
 
 **Scale assumption:** about 10 companies at launch, with 50 to 60 products per company.
 
-**Customer mobile app (Release 2):** a Flutter app for each company's eCommerce store, using the same storefront APIs (see 5.14).
+**Two Flutter mobile apps (separate apps):**
+- **ERP Mobile App (Section 14):** for Company Admins and Company Staff, built after the web system is complete (Phase 6 of the plan). It carries the day-to-day features of the Admin Panel that suit a phone, with the same APIs, rules and permissions as the web panel. It is not a copy of the whole panel.
+- **Customer mobile app (Release 2):** for each company's eCommerce store, using the same storefront APIs (see 5.14).
 
-**Technology:** .NET for the backend and APIs, React for the Admin Panel and the storefront website, PostgreSQL as the database; Flutter for the Release 2 mobile app.
+**Technology:** .NET for the backend and APIs, React for the Admin Panel and the storefront website, PostgreSQL as the database; Flutter for both mobile apps.
 
 ---
 
@@ -505,7 +507,7 @@ Based on the Consumer Protection (E-Commerce) Rules, 2020 and Legal Metrology ru
 
 ### 5.14 Customer Mobile App (Flutter) **[Release 2]**
 - A Flutter app (Android and iOS) for the company's customers, with the same features as the storefront: catalogue, product page with declarations, cart and checkout (Razorpay and COD), account, orders, addresses, feedback and complaints.
-- Uses the same company-scoped storefront APIs as the website (5.8); no separate backend.
+- Uses the same company-scoped storefront APIs as the website (5.8); no separate backend. It is a separate app from the staff and owner ERP Mobile App (Section 14).
 - Details (one app per company or one shared app, store publishing, push notifications) will be agreed before Release 2 starts; the developer will provide boilerplate code.
 
 ---
@@ -624,7 +626,7 @@ The Company Admin can see complete profit, with charts, tables and drill-down, f
 
 - Accounting/general ledger with full double-entry books.
 - Filing and paying PF, ESI, professional tax and TDS on government portals: planned for Release 3. In Releases 1 and 2 payroll calculates them and produces statements (see 4.19).
-- Native mobile apps in Release 1 (web is responsive). A Flutter customer app for the eCommerce store is planned for Release 2 (see 5.14).
+- Native mobile apps in the web Release 1 (web is responsive). The Flutter ERP Mobile App for staff and owners follows the web release as Phase 6 (see Section 14). The Flutter customer app for the eCommerce store is planned for Release 2 (see 5.14).
 - Automated courier integration and shipping labels (manual courier and tracking entry is in scope; automation is an optional Release 2 module, see 5.11).
 - Government e-invoice (IRN) and e-way bill API integration in the first release (fields are reserved, optional Release 2 module; see 4.21).
 - Tax systems of other countries: not built now, only kept possible by design (#).
@@ -680,7 +682,12 @@ Tell me if any of these should be moved into scope.
 | 38 | Company identity | One GSTIN and one PAN per company. Another GSTIN or PAN needs a new company. |
 | 39 | Portal filing | Filing and payment on government portals (GST returns, PF, ESI, Professional Tax, TDS) is outside Releases 1 and 2 and planned for Release 3. |
 | 40 | Technology | Backend and APIs in .NET, Admin Panel and storefront website in React, PostgreSQL database. |
-| 41 | Mobile app | A Flutter customer app for the eCommerce store is planned for Release 2 (see 5.14); details are agreed before Release 2 starts. |
+| 41 | Mobile app | A Flutter customer app for the eCommerce store is planned for Release 2 (see 5.14); details are agreed before Release 2 starts. It is a separate app from the ERP Mobile App (row 42). |
+| 42 | ERP Mobile App | A separate Flutter app for Company Admins and Company Staff (not the Super Admin), built after the web system is complete (Phase 6). Scope is the Must and Should groups of Section 14 (about 15 screen groups), not the whole panel. It uses the same APIs, permissions and structure as the web panel. |
+| 43 | Mobile offline | Only sales billing (including exhibition stall billing) and stock scans work offline and sync later. Everything else needs a connection. |
+| 44 | Mobile scanning | Camera barcode scanning only. No Bluetooth or other hardware printers in the first mobile release (invoices are shared as PDF). |
+| 45 | Mobile APIs | The web APIs are built mobile-ready from Phase 1 (Section 14.4), so the mobile phase is not blocked by API changes. |
+| 46 | Mobile platforms | Flutter for Android and iOS. Android is built and tested first; iOS needs an Apple developer account and a Mac for the iOS build (to be confirmed before Phase 6). |
 
 ---
 
@@ -763,6 +770,71 @@ You accepted all my suggestions, so each one is a requirement now. Release 1 mea
 
 **Compliance items in Release 2:** Bill of Supply and reverse-charge flag (4.21), the e-Invoice module (4.21; the invoice fields are reserved in Release 1), and customer data rights, retention rules and the breach log under DPDP (7.1), which must be ready before May 2027.
 
-**Release 2 also includes** the Flutter customer app (5.14).
+**Release 2 also includes** the Flutter customer app (5.14), a separate app from the ERP Mobile App (Section 14, Phase 6).
 
 **Release 3 (planned):** filing and payment on government portals for GST returns (GSTR-1, GSTR-3B), PF, ESI, Professional Tax and TDS.
+
+---
+
+## 14. ERP Mobile App (Flutter) **[Mobile, Phase 6]**
+
+### 14.1 Purpose and principle
+- A separate Flutter app for **Company Admins and Company Staff** (Android first, then iOS). The Super Admin and the CA use the web only.
+- It brings the features of the web Admin Panel that people need while moving (stall, shop, warehouse, factory floor, owner away from the desk). It is **not a copy of the whole panel**: heavy set-up, analysis and rare tasks stay on the web (14.6).
+- Same APIs, same business rules, same roles and permissions, and the same module structure and names as the web panel. A person who knows the web panel finds the same modules, fields and statuses on the phone. No separate backend.
+- Built in the last phase, after the web system is complete and accepted, using the developer's Flutter boilerplate (Clean Pattern Boilerplate).
+
+### 14.2 Must: daily operations (first mobile milestones)
+| Group | What the user can do on the phone | Web section |
+|---|---|---|
+| Sign-in and menu | Login with email or mobile and password, forgot/reset/change password, session list and logout; app lock with biometric or PIN; menu shows only the modules the user's role allows (view/create/edit/delete as on the web). | 2 |
+| Dashboard | Company KPIs: today's sales, stock alerts, pending orders, expiry alerts. | 4.1 |
+| Stock lookup | Search finished goods, raw material, packing and labels; see stock by lot and batch with price, expiry and FEFO order; low-stock and expiry alerts; **camera barcode scan** to find an item. Works offline for scans. | 4.3 to 4.8 |
+| Quick sales invoice | Create a GST tax invoice with customer, items by scan or search, batch-wise FEFO stock, payment mode and discount; share or save the PDF (WhatsApp, email, print through the phone's print service). Works offline and syncs later. | 4.10, 4.21 |
+| Exhibition and stall billing | Fast touch billing at a stall with barcode scanning, payment modes and customer capture (name, mobile) for leads. Works offline and syncs later. | 4.14 |
+| Online orders | List, open, confirm, pack, ship (courier and tracking number) and cancel online store orders; see payment status. | 5.9 |
+| Notifications | Push notifications for new orders, low stock, expiry and approvals; in-app notification list. | 7 |
+
+### 14.3 Should: field and approval work (later mobile milestones)
+| Group | What the user can do on the phone | Web section |
+|---|---|---|
+| Goods receipt (GRN) | Receive goods against a purchase order, scan items, enter lot and expiry, attach photos of the delivery. | 4.9, 4.20 |
+| Production | Enter a production batch from one lot, record quality check pass or fail with remarks, record packing and labels. | 4.6, 4.18 |
+| Stock adjustments and approvals | Raise a stock adjustment or count with a reason; approve or reject pending adjustments, purchase orders and similar approvals as allowed by the role. | 4.20 |
+| Expenses | Add an expense with category, amount, payment mode and a photo of the receipt. | 4.12 |
+| Customers | Search a customer, view contact details and history, call or message, add a new customer. | 4.11 |
+| Staff self-service | Every staff member views their own salary slips and updates their own bank details (with the same verification as the web). | 2, 4.19 |
+| Owner insights | Day-wise sales and the owner insight cards (read-only). | 4.15, 6.9 |
+
+### 14.4 Mobile-ready APIs (applies to the web APIs from Phase 1)
+- **Versioned APIs** (`/v1`), with the OpenAPI document as the contract used to generate the Flutter client; no breaking change without a new version.
+- **Pagination and small payloads** on every list (cursor or page and size, field selection where useful), so lists load fast on mobile data.
+- **Device-aware sign-in:** refresh-token rotation per device, a device name on each session, remote logout of one device, and registration of a push token per device.
+- **Idempotent creates** for invoices, goods receipts, expenses and adjustments, using a client-generated request key, so a retried or offline-synced request never creates a duplicate.
+- **Offline sync endpoints** for billing and scans: upload a queue of invoices and scans with client ids and times; the server returns per-item results (accepted, rejected with reason, conflict). Stock is checked on the server when the queue syncs; the no-negative-stock rule and FEFO still apply.
+- **Attachments** (receipt and delivery photos) uploaded with size limits and compression guidance.
+- **Server-time and clock safety:** the server stamps the final time; the device time is stored as the "created on device" time.
+- **Push notification service** (device tokens, topics per company and role, delivery log).
+- **Tenant isolation and permissions** are enforced by the API exactly as for the web; the app never decides access alone.
+
+### 14.5 Offline rules (billing and stock scans only)
+- Offline works only for: scanning items and viewing stock cached on the phone, creating sales invoices, and exhibition stall billing. Every other module needs a connection and says so clearly.
+- The app keeps a local queue; the user sees how many items are waiting and the sync result for each one.
+- Invoice numbers are reserved so offline invoices never clash: each device gets its own number range per company, or a temporary number that becomes final on sync (decided in the technical document; the GST numbering rules in 4.21 must still hold).
+- Cached stock is shown with the time it was last updated. If a synced invoice would make stock negative, the item is returned to the user as a conflict to fix; it is never silently dropped.
+- Offline data on the device is encrypted and removed on logout.
+
+### 14.6 Web only (not in the mobile app)
+Company profile and Master Configuration, tax and GST set-up, the CA filing pack and CA review, roles and permission design, staff creation, bulk import and export, subscription and billing pages, all Super Admin screens, store content, blogs, policies and FAQs, payroll runs, marketing campaign set-up, and the full report library and profit analytics. Users who need them open the web panel.
+
+### 14.7 Mobile non-functional requirements
+- Android and iOS from one Flutter code base; phones first, tablets work but are not specially designed.
+- Camera barcode scanning only (no Bluetooth printers or scanners). Printing and sharing use the phone's share and print features.
+- Secure storage for tokens, automatic logout on inactivity (same default as the web), app lock, screen protection for sensitive screens, rooted-device warning.
+- The same design language and terms as the web panel (colours, names of modules and statuses).
+- Cold start in about 3 seconds on a mid-range phone; list screens show the first page in about 2 seconds on a normal mobile connection.
+- English first; the app is built so more languages can be added (multi-language UI is Release 2 on the web too).
+- Store publishing is done by the developer (Play Store and App Store); the toolkit builds and tests but never publishes.
+
+### 14.8 Later mobile additions (not in the first mobile release)
+Read-only report library with share, marketing campaign send, payroll view, purchase order creation, Bluetooth printers, tablet layouts, and the CA read-only login.

@@ -29,5 +29,11 @@ Expenses and payroll (MS-3.1, MS-3.2) feed batch costing and profit. Exhibitions
 ## Risks and decisions needed before the phase starts
 - Statutory rates (PF, ESI, Professional Tax, TDS) and the CA pack format must be confirmed with the CA before their batches close.
 
+## Mobile-readiness (for the ERP Mobile App, PH-6, §14.4)
+- Expenses accept receipt photos and idempotency keys (WB-3.1.1); stock adjustments and counts are idempotent and have an approval endpoint usable by a phone (WB-3.1.3).
+- Barcode lookup endpoint returns the item with lot, batch, price, expiry and FEFO order in one small call (WB-3.1.4).
+- **Exhibition quick billing uses the same offline sync endpoint as sales invoices** (WB-3.3.2).
+- Salary slips and the staff's own bank details are available per signed-in staff member (WB-3.2.3, WB-3.2.4).
+
 ## Definition of done (phase)
 Every milestone DONE, the phase demo accepted at gate G-P, calibration recorded, the next phase re-planned in detail with the real points per batch.

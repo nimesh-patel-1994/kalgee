@@ -5,7 +5,7 @@
 > Outline. This batch is written in detail (requirements with sizes, deliverables, acceptance criteria, tests) when Phase 5 becomes ACTIVE, after re-planning with the measured points per batch.
 
 ## Goal
-UAT sign-off, go-live checklist, Release 2 planning kick-off.
+UAT sign-off, go-live checklist of the web Release 1, PH-6 (ERP Mobile App) kick-off and Release 2 planning.
 
 ## Requirements in this batch
 PH-5 in `FeatureListing.md` v1.4 (sections referenced as §n.n). No new features: end-to-end journey, regression, fixes, demo script.

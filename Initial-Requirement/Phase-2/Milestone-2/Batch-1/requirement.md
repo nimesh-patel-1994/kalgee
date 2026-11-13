@@ -12,3 +12,6 @@ Invoice with FEFO batch selection, CGST/SGST or IGST, B2B/B2C type, numbering (F
 
 ## Depends on
 MS-2.1 (previous milestone)
+
+## Mobile-readiness (for PH-6, §14.4)
+Sales invoice create is idempotent; design the offline invoice sync endpoint (queue in, per-invoice accepted, rejected or conflict out) and the device invoice-number approach together with the GST numbering rules.

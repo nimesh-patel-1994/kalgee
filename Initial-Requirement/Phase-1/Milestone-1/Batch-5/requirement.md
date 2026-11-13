@@ -24,6 +24,7 @@ WB-1.1.1 to WB-1.1.4.
 ## Acceptance criteria
 - Given the demo script, when the developer follows it, then every step works without manual fixes.
 - Given a token of company A, when any company-B id is requested on any endpoint, then the API returns 404 or 403.
+- Given the API contract, when the mobile-readiness check runs (versioned routes, paginated lists, idempotent creates, device sessions), then it passes for every endpoint built so far.
 
 ## Tests
 - E2E milestone journey

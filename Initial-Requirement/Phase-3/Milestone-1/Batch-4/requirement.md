@@ -12,3 +12,6 @@ Camera and USB scanning in billing, counts and GRN; day-wise sales register with
 
 ## Depends on
 WB-3.1.3
+
+## Mobile-readiness (for PH-6, §14.4)
+Barcode lookup returns item, lot, batch, price, expiry and FEFO order in one small call; a cacheable stock snapshot endpoint supports offline scans.

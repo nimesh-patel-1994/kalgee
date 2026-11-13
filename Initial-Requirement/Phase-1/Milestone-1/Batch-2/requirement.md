@@ -12,13 +12,14 @@ Users sign in with email or mobile and password, recover and change their passwo
 | §2 | Forgot and reset password by email link; change password | S |
 | §2, §13 | Session management: auto-logout after inactivity (default 30 minutes, configurable), list of active sessions, log out one device, log out from all devices | M |
 | §7 security | Password hashing (Argon2id or bcrypt), login throttling and lockout, security events in the log | S |
+| §14.4 | Device-aware sessions for the mobile app: device name and platform stored on each session, push-token registration per device (`/devices`), logout of one device also removes its push token (absorbed in the session item, no extra points; checked at calibration) | — |
 
 ## Depends on
 WB-1.1.1 (solution, tenancy base, shell).
 
 ## Deliverables
 - Database: `users`, `user_sessions`, `password_reset_tokens`.
-- API: `/auth/login`, `/auth/refresh`, `/auth/logout`, `/auth/logout-all`, `/auth/sessions`, `/auth/forgot`, `/auth/reset`, `/auth/change-password`.
+- API: `/auth/login`, `/auth/refresh`, `/auth/logout`, `/auth/logout-all`, `/auth/sessions`, `/auth/forgot`, `/auth/reset`, `/auth/change-password`.  `/devices` (register and remove a push token).
 - Screens: Login, forgot password, reset password, change password, active sessions page; inactivity timer.
 - Jobs, integrations: Email sending through a development mail catcher (real provider settings come in WB-1.2.4).
 
@@ -27,6 +28,7 @@ WB-1.1.1 (solution, tenancy base, shell).
 - Given 5 failed logins, when a 6th is tried within the lock window, then it is refused with a clear message.
 - Given two active sessions, when the user chooses 'log out from all devices', then both refresh tokens stop working.
 - Given 30 minutes without activity, when the user clicks anything, then they are signed out.
+- Given a mobile login that sends a device name and push token, when the user lists sessions, then the device appears by name, and after logging out that device its push token is removed.
 
 ## Tests
 - Auth service unit tests

@@ -27,5 +27,10 @@ Reports (MS-5.1, MS-5.2) read every module; release readiness (MS-5.3) checks th
 ## Risks and decisions needed before the phase starts
 - Hosting and the cloud provider must be decided before MS-5.3 (gate G3: the developer applies the infrastructure).
 
+## Mobile-readiness (for the ERP Mobile App, PH-6, §14.4)
+- The notification service gains push delivery (device tokens, topics per company and role, delivery log) for low stock, expiry, new orders and approvals (WB-5.2.4).
+- Security review and load tests include the mobile API surface: refresh-token rotation per device, offline sync endpoint abuse and size limits, and the mobile-readiness contract check (WB-5.3.1, WB-5.3.2).
+- Note: the web Release 1 goes live at the end of this phase; the ERP Mobile App follows in PH-6.
+
 ## Definition of done (phase)
 Every milestone DONE, the phase demo accepted at gate G-P, calibration recorded, the next phase re-planned in detail with the real points per batch.

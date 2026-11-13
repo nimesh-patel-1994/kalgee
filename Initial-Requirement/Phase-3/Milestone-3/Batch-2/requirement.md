@@ -12,3 +12,6 @@ Touch-friendly billing with barcode, lead capture, day-wise figures, bulk import
 
 ## Depends on
 WB-3.3.1
+
+## Mobile-readiness (for PH-6, §14.4)
+Exhibition billing reuses the offline invoice sync endpoint from WB-2.2.1; no separate sync logic.

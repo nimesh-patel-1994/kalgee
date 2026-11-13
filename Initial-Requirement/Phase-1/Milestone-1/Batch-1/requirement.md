@@ -12,6 +12,7 @@ An empty but production-shaped solution runs locally with one command: .NET API,
 | §1, §7 security | Multi-tenant base: company id on every tenant-owned table, global query filter, tenant resolution from the signed-in user, cross-tenant guard in the data layer | M |
 | §7 responsive UI | Design system: tokens (colours, type, spacing), app shell (header, side menu, content area), responsive layout, `DESIGN.md`; Hallmark lint on the shell | S |
 | §7 | Platform plumbing: structured logging, error response format, health endpoint, OpenAPI with a generated TypeScript client, run kit (`start.cmd`), CI workflow, secret scan | S |
+| §14.4 | Mobile-ready API conventions: `/v1` versioning, one pagination and field-selection standard for every list, idempotency-key support on create endpoints, server time stamping (absorbed in the platform plumbing item, no extra points; checked at calibration) | — |
 
 ## Depends on
 None (first batch).
@@ -26,6 +27,8 @@ None (first batch).
 - Given a fresh clone, when the developer double-clicks `start.cmd`, then the API health check and the admin shell answer within 2 minutes.
 - Given two companies' rows in a tenant table, when a query runs for company A, then no row of company B is returned (automated test).
 - Given the design tokens, when the shell is linted by Hallmark, then there is no Floor finding.
+- Given any list endpoint, when it is called without paging parameters, then it returns a bounded first page with the paging fields (contract test).
+- Given a create request sent twice with the same idempotency key, when both arrive, then exactly one record exists and the second call returns the first result (shared test helper, applied to real endpoints from Phase 2).
 
 ## Tests
 - Tenant filter unit and integration tests

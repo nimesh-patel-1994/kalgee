@@ -12,3 +12,6 @@
 
 ## Depends on
 MS-5.2 (previous milestone)
+
+## Mobile-readiness (for PH-6, §14.4)
+Security review covers the mobile API surface and the offline sync endpoint.

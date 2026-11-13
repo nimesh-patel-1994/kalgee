@@ -29,5 +29,10 @@ Purchases create lots and batches (MS-2.1) that sales (MS-2.2) and production (M
 ## Risks and decisions needed before the phase starts
 - Invoice rules (numbering, tax, B2B/B2C) are legal requirements: confirm the invoice layout with the CA before WB-2.2.2 is closed.
 
+## Mobile-readiness (for the ERP Mobile App, PH-6, §14.4)
+- Idempotency keys on purchase order, GRN, purchase bill and sales invoice creation (WB-2.1.2, WB-2.2.1).
+- **Offline sync endpoint for sales invoices** (WB-2.2.1 to WB-2.2.3): accepts a queue of invoices created on a device, re-checks FEFO stock on the server, and returns accepted, rejected or conflict per invoice. Invoice numbering must allow device number ranges or temporary numbers without breaking the GST numbering rules (decide with the CA before WB-2.2.2 closes).
+- GRN accepts photos and scanned barcodes; production and QA endpoints return compact payloads (WB-2.4.2, WB-2.4.3).
+
 ## Definition of done (phase)
 Every milestone DONE, the phase demo accepted at gate G-P, calibration recorded, the next phase re-planned in detail with the real points per batch.

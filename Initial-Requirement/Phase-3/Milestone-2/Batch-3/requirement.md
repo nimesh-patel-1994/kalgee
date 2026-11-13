@@ -12,3 +12,6 @@ Run, approve, mark paid; slips; staff self-service; salary as expense; payroll r
 
 ## Depends on
 WB-3.2.2
+
+## Mobile-readiness (for PH-6, §14.4)
+Each signed-in staff member can fetch their own salary slips (permission: own data only).

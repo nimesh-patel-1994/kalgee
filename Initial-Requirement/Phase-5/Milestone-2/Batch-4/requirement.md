@@ -12,3 +12,6 @@ Global search, onboarding checklist and sample data, backups and restore, data e
 
 ## Depends on
 WB-5.2.3
+
+## Mobile-readiness (for PH-6, §14.4)
+Push delivery added to the notification service (device tokens, topics, delivery log).

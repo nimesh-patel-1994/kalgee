@@ -30,5 +30,10 @@ The storefront API (MS-4.1) is the only way the website (MS-4.2) reaches data; o
 - Storefront look matters most to customers: MS-4.2 starts UI-first (prototype every store screen on mock data, freeze, then wire).
 - Custom domains need TLS certificates per domain; the approach is decided in WB-4.3.3's tech spec.
 
+## Mobile-readiness (for the ERP Mobile App, PH-6, §14.4)
+- Online order handling APIs (confirm, pack, ship with courier and tracking, cancel) are usable from a phone: compact list and detail payloads and status filters (WB-4.3.1).
+- New-order events create a push notification through the notification service (WB-4.3.1).
+- The customer storefront APIs stay company-scoped and versioned, because the Release 2 customer app will reuse them.
+
 ## Definition of done (phase)
 Every milestone DONE, the phase demo accepted at gate G-P, calibration recorded, the next phase re-planned in detail with the real points per batch.

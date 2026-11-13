@@ -12,3 +12,6 @@ Load test for 10 companies × 60 products with realistic orders; fair-use limits
 
 ## Depends on
 WB-5.3.1
+
+## Mobile-readiness (for PH-6, §14.4)
+Load test includes mobile list endpoints and a burst of offline sync uploads.

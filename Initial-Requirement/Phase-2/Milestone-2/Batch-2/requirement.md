@@ -12,3 +12,6 @@ GST invoice layout, branded template, A4 and thermal, PDF, share by email/WhatsA
 
 ## Depends on
 WB-2.2.1
+
+## Mobile-readiness (for PH-6, §14.4)
+Confirm the offline invoice numbering with the CA before this batch closes; PDF is shareable from a phone.

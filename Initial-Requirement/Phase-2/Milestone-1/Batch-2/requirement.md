@@ -12,3 +12,6 @@ Receive against a PO, partial receipts, lots and batches created, ordered vs rec
 
 ## Depends on
 WB-2.1.1
+
+## Mobile-readiness (for PH-6, §14.4)
+GRN create is idempotent and accepts delivery photos and scanned barcodes.

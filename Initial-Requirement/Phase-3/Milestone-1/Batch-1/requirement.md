@@ -12,3 +12,6 @@ Electricity, marketing, rent, misc and custom expenses with bills, overhead flag
 
 ## Depends on
 PH-2 (previous phase)
+
+## Mobile-readiness (for PH-6, §14.4)
+Expense create is idempotent and accepts receipt photos (size limit).

@@ -12,3 +12,6 @@ Batch from one lot only, raw material deducted, output and loss % with alerts, b
 
 ## Depends on
 WB-2.4.1
+
+## Mobile-readiness (for PH-6, §14.4)
+Production batch and QA endpoints return compact payloads suitable for a phone.
